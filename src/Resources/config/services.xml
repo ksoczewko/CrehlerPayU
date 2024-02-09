@@ -1,0 +1,77 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <service id="crehler_payu.logger" class="Monolog\Logger">
+            <factory service="Shopware\Core\Framework\Log\LoggerFactory" method="createRotating"/>
+            <argument type="string">payu</argument>
+        </service>
+        <service id="Crehler\PayU\Core\Checkout\Payment\PayUPayment">
+            <argument id="Shopware\Core\Checkout\Order\Aggregate\OrderTransaction\OrderTransactionStateHandler" type="service"/>
+            <argument id="Crehler\PayU\Service\PayU\OrderCreate" type="service"/>
+            <argument type="service" id="order_transaction.repository"/>
+            <argument type="service" id="Crehler\PayU\Service\PayU\UpdateStatus"/>
+            <argument type="service" id="crehler_payu.logger"/>
+            <tag name="shopware.payment.method.async"/>
+        </service>
+        <service id="Crehler\PayU\Service\FinalizeTokenGenerator">
+            <argument type="service" id="Shopware\Core\Checkout\Payment\Cart\Token\JWTFactoryV2"/>
+            <argument type="service" id="router"/>
+            <argument type="service" id="order_transaction.repository"/>
+        </service>
+        <service id="Crehler\PayU\Controller\Storefront\PayUNotifyController" public="true">
+            <argument type="service" id="Crehler\PayU\Service\FinalizeTokenGenerator"/>
+            <argument type="service" id="Crehler\PayU\Core\Checkout\Payment\PayUPayment"/>
+            <argument type="service" id="crehler_payu.logger"/>
+            <call method="setContainer">
+                <argument type="service" id="service_container"/>
+            </call>
+        </service>
+        <service id="Crehler\PayU\Controller\Api\PayUDetailController" public="true">
+            <argument type="service" id="Crehler\PayU\Service\PayU\TransactionDetails"/>
+            <call method="setContainer">
+                <argument type="service" id="service_container"/>
+            </call>
+        </service>
+        <service id="Crehler\PayU\Controller\Api\ConfigurationController" public="true">
+            <argument type="service" id="crehler_payu.logger"/>
+            <argument type="service" id="Crehler\PayU\Service\PayU\ConfigurationService"/>
+            <argument type="service" id="Crehler\PayU\Util\PayuMethodFinder" />
+            <argument type="service" id="Shopware\Core\System\SystemConfig\SystemConfigService" />
+            <call method="setContainer">
+                <argument type="service" id="service_container"/>
+            </call>
+        </service>
+        <service id="Crehler\PayU\Service\PayU\ConfigurationService">
+            <argument type="service" id="Shopware\Core\System\SystemConfig\SystemConfigService" />
+            <argument type="service" id="Crehler\PayU\Util\VendorLoader" />
+        </service>
+        <service id="Crehler\PayU\Service\PaymentDetailsReader">
+            <argument type="service" id="language.repository"/>
+            <argument type="service" id="locale.repository"/>
+            <argument type="service" id="order_address.repository"/>
+            <argument type="service" id="country.repository"/>
+            <argument id="Shopware\Core\System\SystemConfig\SystemConfigService" type="service"/>
+        </service>
+        <service id="Crehler\PayU\Service\PayU\OrderCreate">
+            <argument id="Crehler\PayU\Service\FinalizeTokenGenerator" type="service"/>
+            <argument id="Crehler\PayU\Service\PaymentDetailsReader" type="service"/>
+            <argument id="request_stack" type="service"/>
+            <argument id="Crehler\PayU\Service\PayU\ConfigurationService" type="service"/>
+        </service>
+        <service id="Crehler\PayU\Service\PayU\UpdateStatus">
+            <argument id="Crehler\PayU\Service\PayU\ConfigurationService" type="service"/>
+        </service>
+        <service id="Crehler\PayU\Service\PayU\TransactionDetails">
+            <argument id="Crehler\PayU\Service\PayU\ConfigurationService" type="service"/>
+            <argument id="order_transaction.repository" type="service"/>
+        </service>
+        <service id="Crehler\PayU\Util\VendorLoader"/>
+        <service id="Crehler\PayU\Util\PayuMethodFinder" public="true">
+            <argument id="payment_method.repository" type="service"/>
+        </service>
+    </services>
+</container>

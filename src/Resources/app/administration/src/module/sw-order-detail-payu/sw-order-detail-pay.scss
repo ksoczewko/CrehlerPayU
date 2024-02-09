@@ -1,0 +1,43 @@
+.cr-payu-transaction {
+    .cr-payu-transaction-container{
+        .sw-description-list {
+            dt,
+            dd {
+                border-color: transparent;
+            }
+            dd {
+                padding: 0 0 28px 0;
+            }
+            dt {
+                padding: 0;
+            }
+        }
+        .cr-image-container{
+            display: flex;
+            flex-direction: row;
+            flex-wrap: nowrap;
+            justify-content: center;
+            align-content: center;
+            align-items: center;
+            .cr-brand-image{
+                width: 120px;
+                height: auto;
+            }
+        }
+    }
+    .crehler-footer{
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        justify-content: flex-end;
+        align-content: center;
+        align-items: flex-end;
+        font-size: 11px;
+        margin-top: 25px;
+        .crehler-logo{
+            width: 65px;
+            height: auto;
+            margin-left: 5px;
+        }
+    }
+}

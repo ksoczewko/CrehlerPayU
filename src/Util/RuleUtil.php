@@ -1,0 +1,128 @@
+<?php
+/**
+ * @copyright 2019 Crehler Sp. z o. o.
+ *
+ * https://crehler.com/
+ * support@crehler.com
+ *
+ * This file is part of the PayU plugin for Shopware 6.
+ * All rights reserved.
+ */
+
+namespace Crehler\PayU\Util;
+
+use Shopware\Core\Framework\Context;
+use Shopware\Core\Framework\DataAbstractionLayer\EntityRepositoryInterface;
+use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
+use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
+use Shopware\Core\Framework\Rule\Container\AndRule;
+use Shopware\Core\Framework\Uuid\Uuid;
+use Shopware\Core\System\Currency\Rule\CurrencyRule;
+
+class RuleUtil
+{
+    const RULE_NAME = 'PayU only PLN';
+
+    /** @var EntityRepositoryInterface */
+    private $ruleRepository;
+
+    /** @var EntityRepositoryInterface */
+    private $currencyRepository;
+
+    /** @var Context */
+    private $context;
+
+    public function __construct(EntityRepositoryInterface $ruleRepository,
+                                EntityRepositoryInterface $currencyRepository,
+                                Context $context
+    ) {
+        $this->ruleRepository = $ruleRepository;
+        $this->currencyRepository = $currencyRepository;
+        $this->context = $context;
+    }
+
+    /**
+     * @throws \Exception
+     *
+     * @return string|null
+     */
+    public function getRuleId(): ?string
+    {
+        $ruleID = $this->checkRuleExist();
+        if ($ruleID !== null) {
+            return $ruleID;
+        }
+
+        return $this->createRule();
+    }
+
+    /**
+     * @throws \Exception
+     *
+     * @return string|null
+     */
+    private function checkRuleExist(): ?string
+    {
+        $ruleCriteria = (new Criteria())
+            ->addFilter(new EqualsFilter('name', self::RULE_NAME));
+        $ruleIds = $this->ruleRepository->searchIds($ruleCriteria, $this->context);
+        if ($ruleIds->getTotal() === 0) {
+            return null;
+        }
+
+        return $ruleIds->firstId();
+    }
+
+    /**
+     * @throws \Exception
+     *
+     * @return string|null
+     */
+    private function createRule(): ?string
+    {
+        $ruleId = Uuid::randomHex();
+        $currencyId = $this->getCurrencyID();
+        $data = [
+            'id' => $ruleId,
+            'name' => self::RULE_NAME,
+            'priority' => 1,
+            'description' => 'The currency required is PLN',
+            'conditions' => [
+                [
+                    'type' => (new AndRule())->getName(),
+                    'children' => [
+                        [
+                            'type' => (new CurrencyRule())->getName(),
+                            'value' => [
+                                'currencyIds' => [$currencyId],
+                                'operator' => CurrencyRule::OPERATOR_EQ,
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
+        $this->ruleRepository->create([$data], $this->context);
+
+        return $ruleId;
+    }
+
+    /**
+     * @throws \Exception
+     *
+     * @return string
+     */
+    private function getCurrencyID(): string
+    {
+        $criteria = (new Criteria())
+            ->addFilter(new EqualsFilter('currency.isoCode', 'PLN'));
+
+        $currency = $this->currencyRepository->search($criteria, $this->context);
+
+        if ($currency->count() < 1) {
+            throw new \Exception('You must have the currency PLN in the store before installing Polish payments.');
+        }
+
+        return $currency->first()->getId();
+    }
+}

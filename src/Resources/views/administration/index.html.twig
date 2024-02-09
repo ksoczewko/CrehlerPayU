@@ -1,0 +1,11 @@
+{% sw_extends 'administration/index.html.twig' %}
+
+{% block administration_scripts %}
+    {{ parent() }}
+    <script type="text/javascript" src="{{ asset('bundles/payu/administration/js/pay-u.js') }}"></script>
+{% endblock %}
+
+{% block administration_stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('bundles/payu/administration/css/pay-u.css') }}" />
+{% endblock %}

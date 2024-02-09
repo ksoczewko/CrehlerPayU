@@ -1,0 +1,25 @@
+{
+    "crehler-payu": {
+        "title": "Metoda płatności:",
+        "footer": "PayU zintegrowane przez",
+        "storeFrontForm": {
+            "errorTitle": "Błąd konfiguracji PayU",
+            "errorMessage": "Konfiguracja PayU jest niekompletna. Proszę uzupełnij ją."
+        },
+        "sadboxWarning": {
+            "title": "Konfiguracja PayU",
+            "message": "Uwaga! PayU działa w trybie Sanbox. Nie przyjmuj prawdziwych płatności w tym trybie."
+        },
+        "credentialsError": {
+            "title": "Błąd konfiguracji PayU",
+            "message": "Podane dane dostępowe PayU są nieprawidłowe. Metoda płatności nie będzie działać prawidłowo."
+        },
+        "config": {
+            "credentialCheckButton": "Sprawdź dane",
+            "successTitle": "Sukces",
+            "successMessage": "Dane są prawidłowe",
+            "errorTitle": "Błąd",
+            "errorMessage": "Dane nieprawidłowe"
+        }
+    }
+}

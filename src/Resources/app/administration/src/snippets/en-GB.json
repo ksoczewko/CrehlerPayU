@@ -1,0 +1,25 @@
+{
+    "crehler-payu": {
+        "title": "Payment method:",
+        "footer": "PayU integrated by",
+        "storeFrontForm": {
+            "errorTitle": "Can't add payment method to sales channel",
+            "errorMessage": "Configuration PayU is incomplete. Please complete it."
+        },
+        "sadboxWarning": {
+            "title": "PayU configuration",
+            "message": "Warning! PayU works in Sanbox mode. Do not accept real payments in this mode."
+        },
+        "credentialsError": {
+            "title": "PayU configuration error",
+            "message": "The PayU access data provided is incorrect. Payment method will not work properly."
+        },
+        "config": {
+            "credentialCheckButton": "Check credentials",
+            "successTitle": "Success",
+            "successMessage": "The data is correct",
+            "errorTitle": "Error",
+            "errorMessage": "Invalid data"
+        }
+    }
+}

@@ -1,0 +1,25 @@
+{
+    "crehler-payu": {
+        "title": "Zahlungsmethode:",
+        "footer": "PayU integriert von",
+        "storeFrontForm": {
+            "errorTitle": "Zahlungsmethode kann nicht zum Vertriebskanal hinzugefügt werden",
+            "errorMessage": "Die Konfiguration PayU ist unvollständig. Bitte vervollständigen Sie es."
+        },
+        "sadboxWarning": {
+            "title": "PayU-Konfiguration",
+            "message": "Warnung! PayU arbeitet im Sandbox-Modus. Akzeptieren Sie nicht alle Zahlungen in diesem Modus."
+        },
+        "credentialsError": {
+            "title": "PayU-Konfigurationsfehler",
+            "message": "Die angegebenen PayU-Zugriffsdaten sind falsch. Zahlungsmethode funktioniert nicht richtig."
+        },
+        "config": {
+            "credentialCheckButton": "Prüfen",
+            "successTitle": "Erfolg",
+            "successMessage": "Die Daten sind korrekt",
+            "errorTitle": "Error",
+            "errorMessage": "Ungültige Daten"
+        }
+    }
+}
