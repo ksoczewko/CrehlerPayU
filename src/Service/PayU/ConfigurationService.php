@@ -53,9 +53,12 @@ class ConfigurationService
     /**
      * @throws \OpenPayU_Exception_Configuration
      */
-    public function initialize(?bool $sandbox = null)
+    public function initialize(?bool $sandbox = null, string $salesChannel = null): void
     {
-        $salesChannel = $this->request->getCurrentRequest()?->get('sw-sales-channel-id');
+        if ($salesChannel === null) {
+            $salesChannel = $this->request->getCurrentRequest()?->get('sw-sales-channel-id');
+        }
+
         if ($sandbox === null) {
             $sandbox = (int) $this->configurationService->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_SANDBOX, $salesChannel);
         }
