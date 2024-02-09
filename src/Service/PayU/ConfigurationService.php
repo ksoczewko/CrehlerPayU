@@ -20,6 +20,7 @@ use OpenPayU_Order;
 use Shopware\Core\System\SystemConfig\SystemConfigService;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Class ConfigurationFactor
@@ -44,7 +45,7 @@ class ConfigurationService
     /**
      * ConfigurationFactor constructor.
      */
-    public function __construct(private readonly SystemConfigService $configurationService, VendorLoader $vendorLoader, private readonly ParameterBagInterface $parameterBag, private readonly Logger $logger)
+    public function __construct(private readonly SystemConfigService $configurationService, VendorLoader $vendorLoader, private readonly ParameterBagInterface $parameterBag, private readonly Logger $logger, private readonly RequestStack $request)
     {
         $vendorLoader->loadOpenPayU();
     }
@@ -54,24 +55,25 @@ class ConfigurationService
      */
     public function initialize(?bool $sandbox = null)
     {
+        $salesChannel = $this->request->getCurrentRequest()?->get('sw-sales-channel-id');
         if ($sandbox === null) {
-            $sandbox = (int) $this->configurationService->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_SANDBOX);
+            $sandbox = (int) $this->configurationService->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_SANDBOX, $salesChannel);
         }
         if ($sandbox) {
             $this->initializePayUStaticConfiguration(
                 true,
-                $this->configurationService->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_SANDBOX_POS_ID),
-                $this->configurationService->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_SANDBOX__MD5_KEY),
-                $this->configurationService->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_SANDBOX_CLIENT_ID),
-                $this->configurationService->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_SANDBOX_CLIENT_SECRET)
+                $this->configurationService->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_SANDBOX_POS_ID, $salesChannel),
+                $this->configurationService->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_SANDBOX__MD5_KEY, $salesChannel),
+                $this->configurationService->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_SANDBOX_CLIENT_ID, $salesChannel),
+                $this->configurationService->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_SANDBOX_CLIENT_SECRET, $salesChannel)
             );
         } else {
             $this->initializePayUStaticConfiguration(
                 false,
-                $this->configurationService->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_POS_ID),
-                $this->configurationService->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_MD5_KEY),
-                $this->configurationService->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_CLIENT_ID),
-                $this->configurationService->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_CLIENT_SECRET)
+                $this->configurationService->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_POS_ID, $salesChannel),
+                $this->configurationService->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_MD5_KEY, $salesChannel),
+                $this->configurationService->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_CLIENT_ID, $salesChannel),
+                $this->configurationService->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_CLIENT_SECRET, $salesChannel)
             );
         }
     }
@@ -81,19 +83,21 @@ class ConfigurationService
      */
     public function isCompleteConfiguration()
     {
+        $salesChannel = $this->request->getCurrentRequest()?->get('sw-sales-channel-id');
+
         if ($this->configurationService->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_SANDBOX)) {
-            if (strlen($this->configurationService->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_SANDBOX_POS_ID)) == 0 ||
-                strlen($this->configurationService->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_SANDBOX__MD5_KEY)) == 0 ||
-                strlen($this->configurationService->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_SANDBOX_CLIENT_ID)) == 0 ||
-                strlen($this->configurationService->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_SANDBOX_CLIENT_SECRET)) == 0
+            if (strlen($this->configurationService->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_SANDBOX_POS_ID, $salesChannel)) == 0 ||
+                strlen($this->configurationService->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_SANDBOX__MD5_KEY, $salesChannel)) == 0 ||
+                strlen($this->configurationService->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_SANDBOX_CLIENT_ID, $salesChannel)) == 0 ||
+                strlen($this->configurationService->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_SANDBOX_CLIENT_SECRET, $salesChannel)) == 0
             ) {
                 return false;
             }
         } else {
-            if (strlen($this->configurationService->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_POS_ID)) == 0 ||
-                strlen($this->configurationService->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_MD5_KEY)) == 0 ||
-                strlen($this->configurationService->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_CLIENT_ID)) == 0 ||
-                strlen($this->configurationService->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_CLIENT_SECRET)) == 0
+            if (strlen($this->configurationService->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_POS_ID, $salesChannel)) == 0 ||
+                strlen($this->configurationService->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_MD5_KEY, $salesChannel)) == 0 ||
+                strlen($this->configurationService->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_CLIENT_ID, $salesChannel)) == 0 ||
+                strlen($this->configurationService->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_CLIENT_SECRET, $salesChannel)) == 0
             ) {
                 return false;
             }
@@ -107,7 +111,9 @@ class ConfigurationService
      */
     public function isSadBox()
     {
-        return (bool) $this->configurationService->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_SANDBOX);
+        $salesChannel = $this->request->getCurrentRequest()?->get('sw-sales-channel-id');
+
+        return (bool) $this->configurationService->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_SANDBOX, $salesChannel);
     }
 
     /**

@@ -50,6 +50,7 @@
             <argument type="service" id="Crehler\PayU\Util\VendorLoader" />
             <argument type="service" id="parameter_bag"/>
             <argument type="service" id="crehler_payu.logger"/>
+            <argument type="service" id="request_stack"/>
         </service>
         <service id="Crehler\PayU\Service\PaymentDetailsReader">
             <argument type="service" id="language.repository"/>
