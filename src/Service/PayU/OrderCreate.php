@@ -81,7 +81,7 @@ class OrderCreate
             ->setDescription($this->paymentDetailsReader->generateShortDescription($asyncPaymentTransactionStruct->getOrder()->getOrderNumber()))
             ->setAdditionalDescription($this->paymentDetailsReader->generateLongDescription($asyncPaymentTransactionStruct->getOrder()->getOrderNumber()))
             ->setCurrencyCode($salesChannelContext->getCurrency()->getIsoCode())
-            ->setTotalAmount($asyncPaymentTransactionStruct->getOrderTransaction()->getAmount()->getTotalPrice() * 100);
+            ->setTotalAmount((int)round($asyncPaymentTransactionStruct->getOrderTransaction()->getAmount()->getTotalPrice() * 100));
 
         return $order;
     }
