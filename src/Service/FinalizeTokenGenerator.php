@@ -11,6 +11,7 @@
 
 namespace Crehler\PayU\Service;
 
+use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Core\Checkout\Order\Aggregate\OrderTransaction\OrderTransactionEntity;
 use Shopware\Core\Checkout\Payment\Cart\AsyncPaymentTransactionStruct;
 use Shopware\Core\Checkout\Payment\Cart\Token\TokenFactoryInterfaceV2 as TokenFactoryInterface;
@@ -18,7 +19,6 @@ use Shopware\Core\Checkout\Payment\Cart\Token\TokenStruct;
 use Shopware\Core\Checkout\Payment\Exception\InvalidTransactionException;
 use Shopware\Core\Checkout\Payment\Exception\TokenExpiredException;
 use Shopware\Core\Framework\Context;
-use Shopware\Core\Framework\DataAbstractionLayer\EntityRepositoryInterface;
 use Shopware\Core\Framework\DataAbstractionLayer\Exception\InconsistentCriteriaIdsException;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\System\SalesChannel\SalesChannelContext;
@@ -30,14 +30,8 @@ use Symfony\Component\Routing\RouterInterface;
  */
 class FinalizeTokenGenerator
 {
-    /** @var TokenFactoryInterface $tokenFactory */
-    private $tokenFactory;
-
-    /** @var RouterInterface $router */
-    private $router;
-
     /**
-     * @var EntityRepositoryInterface
+     * @var EntityRepository
      */
     private $orderTransactionRepository;
 
@@ -45,19 +39,13 @@ class FinalizeTokenGenerator
      * FinalizeTokenGenerator constructor.
      *
      * @param TokenFactoryInterface     $tokenFactory
-     * @param RouterInterface           $router
-     * @param EntityRepositoryInterface $orderTransactionRepository
      */
-    public function __construct(TokenFactoryInterface $tokenFactory, RouterInterface $router, EntityRepositoryInterface $orderTransactionRepository)
+    public function __construct(private readonly TokenFactoryInterface $tokenFactory, private readonly RouterInterface $router, EntityRepository $orderTransactionRepository)
     {
-        $this->tokenFactory = $tokenFactory;
-        $this->router = $router;
         $this->orderTransactionRepository = $orderTransactionRepository;
     }
 
     /**
-     * @param OrderTransactionEntity $orderTransactionEntity
-     *
      * @return string
      */
     public function buildUrl(OrderTransactionEntity $orderTransactionEntity): string
@@ -77,8 +65,6 @@ class FinalizeTokenGenerator
     }
 
     /**
-     * @param string              $paymentToken
-     * @param SalesChannelContext $salesChannelContext
      *
      * @throws InconsistentCriteriaIdsException
      * @throws InvalidTransactionException
@@ -99,8 +85,6 @@ class FinalizeTokenGenerator
     }
 
     /**
-     * @param string $token
-     *
      * @return string
      */
     private function assembleReturnUrl(string $token): string
@@ -111,10 +95,8 @@ class FinalizeTokenGenerator
     }
 
     /**
-     * @param string $token
      *
      * @throws TokenExpiredException
-     *
      * @return TokenStruct
      */
     private function parseToken(string $token): TokenStruct
@@ -131,8 +113,6 @@ class FinalizeTokenGenerator
     }
 
     /**
-     * @param string  $orderTransactionId
-     * @param Context $context
      *
      * @throws InvalidTransactionException
      * @throws InconsistentCriteriaIdsException

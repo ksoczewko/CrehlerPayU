@@ -95,8 +95,6 @@ class BuyerDelivery extends PayUStruct
     }
 
     /**
-     * @param string $street
-     *
      * @return BuyerDelivery
      */
     public function setStreet(string $street): BuyerDelivery
@@ -115,8 +113,6 @@ class BuyerDelivery extends PayUStruct
     }
 
     /**
-     * @param string $postalBox
-     *
      * @return BuyerDelivery
      */
     public function setPostalBox(string $postalBox): BuyerDelivery
@@ -135,8 +131,6 @@ class BuyerDelivery extends PayUStruct
     }
 
     /**
-     * @param string $postalCode
-     *
      * @return BuyerDelivery
      */
     public function setPostalCode(string $postalCode): BuyerDelivery
@@ -155,8 +149,6 @@ class BuyerDelivery extends PayUStruct
     }
 
     /**
-     * @param string $city
-     *
      * @return BuyerDelivery
      */
     public function setCity(string $city): BuyerDelivery
@@ -175,8 +167,6 @@ class BuyerDelivery extends PayUStruct
     }
 
     /**
-     * @param string $state
-     *
      * @return BuyerDelivery
      */
     public function setState(string $state): BuyerDelivery
@@ -195,8 +185,6 @@ class BuyerDelivery extends PayUStruct
     }
 
     /**
-     * @param string $countryCode
-     *
      * @return BuyerDelivery
      */
     public function setCountryCode(string $countryCode): BuyerDelivery
@@ -215,8 +203,6 @@ class BuyerDelivery extends PayUStruct
     }
 
     /**
-     * @param string $name
-     *
      * @return BuyerDelivery
      */
     public function setName(string $name): BuyerDelivery
@@ -235,8 +221,6 @@ class BuyerDelivery extends PayUStruct
     }
 
     /**
-     * @param string $recipientName
-     *
      * @return BuyerDelivery
      */
     public function setRecipientName(string $recipientName): BuyerDelivery
@@ -255,8 +239,6 @@ class BuyerDelivery extends PayUStruct
     }
 
     /**
-     * @param string $recipientEmail
-     *
      * @return BuyerDelivery
      */
     public function setRecipientEmail(string $recipientEmail): BuyerDelivery
@@ -275,8 +257,6 @@ class BuyerDelivery extends PayUStruct
     }
 
     /**
-     * @param string $recipientPhone
-     *
      * @return BuyerDelivery
      */
     public function setRecipientPhone(string $recipientPhone): BuyerDelivery

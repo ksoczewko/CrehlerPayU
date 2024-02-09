@@ -11,20 +11,20 @@
 
 namespace Crehler\PayU\Util;
 
+use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Crehler\PayU\Core\Checkout\Payment\PayUPayment;
 use Shopware\Core\Framework\Context;
-use Shopware\Core\Framework\DataAbstractionLayer\EntityRepositoryInterface;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
 
 class PayuMethodFinder
 {
     /**
-     * @var EntityRepositoryInterface
+     * @var EntityRepository
      */
     private $paymentRepository;
 
-    public function __construct(EntityRepositoryInterface $paymentRepository)
+    public function __construct(EntityRepository $paymentRepository)
     {
         $this->paymentRepository = $paymentRepository;
     }

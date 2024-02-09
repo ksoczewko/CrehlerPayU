@@ -20,32 +20,23 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @RouteScope(scopes={"api"})
+ * @Route(defaults={"_routeScope"={"api"}})
  */
 class PayUDetailController extends AbstractController
 {
-    /** @var TransactionDetails */
-    private $transactionDetails;
-
     /**
      * PayUDetailController constructor.
-     *
-     * @param TransactionDetails $transactionDetails
      */
-    public function __construct(TransactionDetails $transactionDetails)
+    public function __construct(private readonly TransactionDetails $transactionDetails)
     {
-        $this->transactionDetails = $transactionDetails;
     }
 
     /**
-     * @Route("/api/crehler/payu/detail/{id}", name="api.action.crehler.payu.detail", methods={"GET"})
      *
-     * @param string  $id
-     * @param Request $request
-     * @param Context $context
      *
      * @return JsonResponse
      */
+    #[Route(path: '/api/crehler/payu/detail/{id}', name: 'api.action.crehler.payu.detail', methods: ['GET'])]
     public function getDetailInfo(string $id, Request $request, Context $context): JsonResponse
     {
         $data = $this->transactionDetails->getData($id, $context);

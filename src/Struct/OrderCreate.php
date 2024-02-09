@@ -136,8 +136,6 @@ class OrderCreate extends PayUStruct
     }
 
     /**
-     * @param string $extOrderId
-     *
      * @return OrderCreate
      */
     public function setExtOrderId(string $extOrderId): OrderCreate
@@ -156,8 +154,6 @@ class OrderCreate extends PayUStruct
     }
 
     /**
-     * @param string $notifyUrl
-     *
      * @return OrderCreate
      */
     public function setNotifyUrl(string $notifyUrl): OrderCreate
@@ -176,8 +172,6 @@ class OrderCreate extends PayUStruct
     }
 
     /**
-     * @param string $customerIp
-     *
      * @return OrderCreate
      */
     public function setCustomerIp(string $customerIp): OrderCreate
@@ -196,8 +190,6 @@ class OrderCreate extends PayUStruct
     }
 
     /**
-     * @param int $merchantPosId
-     *
      * @return OrderCreate
      */
     public function setMerchantPosId(int $merchantPosId): OrderCreate
@@ -216,8 +208,6 @@ class OrderCreate extends PayUStruct
     }
 
     /**
-     * @param int $validityTime
-     *
      * @return OrderCreate
      */
     public function setValidityTime(int $validityTime): OrderCreate
@@ -236,8 +226,6 @@ class OrderCreate extends PayUStruct
     }
 
     /**
-     * @param string $description
-     *
      * @return OrderCreate
      */
     public function setDescription(string $description): OrderCreate
@@ -256,8 +244,6 @@ class OrderCreate extends PayUStruct
     }
 
     /**
-     * @param string $additionalDescription
-     *
      * @return OrderCreate
      */
     public function setAdditionalDescription(string $additionalDescription): OrderCreate
@@ -276,8 +262,6 @@ class OrderCreate extends PayUStruct
     }
 
     /**
-     * @param string $currencyCode
-     *
      * @return OrderCreate
      */
     public function setCurrencyCode(string $currencyCode): OrderCreate
@@ -296,8 +280,6 @@ class OrderCreate extends PayUStruct
     }
 
     /**
-     * @param int $totalAmount
-     *
      * @return OrderCreate
      */
     public function setTotalAmount(int $totalAmount): OrderCreate
@@ -316,8 +298,6 @@ class OrderCreate extends PayUStruct
     }
 
     /**
-     * @param string $cardOnFile
-     *
      * @return OrderCreate
      */
     public function setCardOnFile(string $cardOnFile): OrderCreate
@@ -336,8 +316,6 @@ class OrderCreate extends PayUStruct
     }
 
     /**
-     * @param string $continueUrl
-     *
      * @return OrderCreate
      */
     public function setContinueUrl(string $continueUrl): OrderCreate
@@ -356,8 +334,6 @@ class OrderCreate extends PayUStruct
     }
 
     /**
-     * @param Buyer $buyer
-     *
      * @return OrderCreate
      */
     public function setBuyer(Buyer $buyer): OrderCreate
@@ -368,8 +344,6 @@ class OrderCreate extends PayUStruct
     }
 
     /**
-     * @param Product $product
-     *
      * @return OrderCreate
      */
     public function addProduct(Product $product): OrderCreate
@@ -408,8 +382,6 @@ class OrderCreate extends PayUStruct
     }
 
     /**
-     * @param string $payMethods
-     *
      * @return OrderCreate
      */
     public function setPayMethods(string $payMethods): OrderCreate
@@ -428,11 +400,9 @@ class OrderCreate extends PayUStruct
     }
 
     /**
-     * @param mixed $mcpData
-     *
      * @return OrderCreate
      */
-    public function setMcpData($mcpData)
+    public function setMcpData(mixed $mcpData)
     {
         $this->mcpData = $mcpData;
 

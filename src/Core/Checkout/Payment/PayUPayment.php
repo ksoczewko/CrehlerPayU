@@ -11,6 +11,10 @@
 
 namespace Crehler\PayU\Core\Checkout\Payment;
 
+use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
+use Shopware\Core\Framework\DataAbstractionLayer\Exception\InconsistentCriteriaIdsException;
+use Shopware\Core\System\StateMachine\Exception\StateMachineNotFoundException;
+use Shopware\Core\System\StateMachine\Exception\StateMachineStateNotFoundException;
 use Crehler\PayU\Entity\OrderTransactionRepository;
 use Crehler\PayU\Service\PayU\OrderCreate;
 use Crehler\PayU\Service\PayU\UpdateStatus;
@@ -21,7 +25,6 @@ use Psr\Log\LoggerInterface;
 use Shopware\Core\Checkout\Order\Aggregate\OrderTransaction\OrderTransactionStateHandler;
 use Shopware\Core\Checkout\Payment\Cart\AsyncPaymentTransactionStruct;
 use Shopware\Core\Checkout\Payment\Cart\PaymentHandler\AsynchronousPaymentHandlerInterface;
-use Shopware\Core\Framework\DataAbstractionLayer\EntityRepositoryInterface;
 use Shopware\Core\Framework\Validation\DataBag\RequestDataBag;
 use Shopware\Core\System\SalesChannel\SalesChannelContext;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -32,53 +35,23 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class PayUPayment implements AsynchronousPaymentHandlerInterface
 {
-    /**
-     * @var OrderTransactionStateHandler
-     */
-    private $transactionStateHandler;
-
-    /**
-     * @var OrderCreate
-     */
-    private $orderCreate;
-
-    /** @var EntityRepositoryInterface */
+    /** @var EntityRepository */
     private $orderTransactionRepository;
-
-    /** @var UpdateStatus */
-    private $updateStatus;
-
-    /** @var LoggerInterface */
-    private $logger;
 
     /**
      * PayUPayment constructor.
-     *
-     * @param OrderTransactionStateHandler $transactionStateHandler
-     * @param OrderCreate                  $orderCreate
-     * @param EntityRepositoryInterface    $orderTransactionRepository
-     * @param UpdateStatus                 $updateStatus
-     * @param LoggerInterface              $logger
      */
     public function __construct(
-        OrderTransactionStateHandler $transactionStateHandler,
-        OrderCreate $orderCreate,
-        EntityRepositoryInterface $orderTransactionRepository,
-        UpdateStatus $updateStatus,
-        LoggerInterface $logger
+        private readonly OrderTransactionStateHandler $transactionStateHandler,
+        private readonly OrderCreate $orderCreate,
+        EntityRepository $orderTransactionRepository,
+        private readonly UpdateStatus $updateStatus,
+        private readonly LoggerInterface $logger
     ) {
-        $this->transactionStateHandler = $transactionStateHandler;
-        $this->orderCreate = $orderCreate;
         $this->orderTransactionRepository = $orderTransactionRepository;
-        $this->updateStatus = $updateStatus;
-        $this->logger = $logger;
     }
 
     /**
-     * @param AsyncPaymentTransactionStruct $transaction
-     * @param RequestDataBag                $dataBag
-     * @param SalesChannelContext           $salesChannelContext
-     *
      * @throws OpenPayU_Exception
      *
      * @return RedirectResponse
@@ -102,9 +75,6 @@ class PayUPayment implements AsynchronousPaymentHandlerInterface
     }
 
     /**
-     * @param AsyncPaymentTransactionStruct $transaction
-     * @param Request                       $request
-     * @param SalesChannelContext           $salesChannelContext
      *
      * @throws \Exception
      */
@@ -114,14 +84,11 @@ class PayUPayment implements AsynchronousPaymentHandlerInterface
     }
 
     /**
-     * @param AsyncPaymentTransactionStruct $transaction
-     * @param Request                       $request
-     * @param SalesChannelContext           $salesChannelContext
      *
      * @throws OpenPayU_Exception
-     * @throws \Shopware\Core\Framework\DataAbstractionLayer\Exception\InconsistentCriteriaIdsException
-     * @throws \Shopware\Core\System\StateMachine\Exception\StateMachineNotFoundException
-     * @throws \Shopware\Core\System\StateMachine\Exception\StateMachineStateNotFoundException
+     * @throws InconsistentCriteriaIdsException
+     * @throws StateMachineNotFoundException
+     * @throws StateMachineStateNotFoundException
      *
      * @return bool
      */
@@ -137,17 +104,12 @@ class PayUPayment implements AsynchronousPaymentHandlerInterface
             if ($order->getStatus() == OpenPayU_Order::SUCCESS) {
                 $this->logger->info('PayU - Paid status: ' . $paymentStatus . ' for order: ' . $shopOrderId);
 
-                switch ($paymentStatus) {
-                    case OpenPayuOrderStatus::STATUS_COMPLETED:
-                        $this->transactionStateHandler->paid($transaction->getOrderTransaction()->getId(), $salesChannelContext->getContext());
-                        break;
-                    case OpenPayuOrderStatus::STATUS_CANCELED:
-                        $this->transactionStateHandler->cancel($transaction->getOrderTransaction()->getId(), $salesChannelContext->getContext());
-                        break;
-                    case OpenPayuOrderStatus::STATUS_WAITING_FOR_CONFIRMATION:
-                        $this->updateStatus->complete($orderID);
-                        break;
-                }
+                match ($paymentStatus) {
+                    OpenPayuOrderStatus::STATUS_COMPLETED => $this->transactionStateHandler->paid($transaction->getOrderTransaction()->getId(), $salesChannelContext->getContext()),
+                    OpenPayuOrderStatus::STATUS_CANCELED => $this->transactionStateHandler->cancel($transaction->getOrderTransaction()->getId(), $salesChannelContext->getContext()),
+                    OpenPayuOrderStatus::STATUS_WAITING_FOR_CONFIRMATION => $this->updateStatus->complete($orderID),
+                    default => true,
+                };
 
                 return true;
             }

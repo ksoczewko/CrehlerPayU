@@ -28,36 +28,21 @@ use Symfony\Component\HttpFoundation\RequestStack;
  */
 class OrderCreate
 {
-    /** @var Request */
-    private $request;
-
-    /** @var FinalizeTokenGenerator */
-    private $finalizeTokenGenerator;
-
-    /** @var PaymentDetailsReader */
-    private $paymentDetailsReader;
+    private ?Request $request = null;
 
     /**
      * OrderCreate constructor.
      *
-     * @param FinalizeTokenGenerator $finalizeTokenGenerator
-     * @param PaymentDetailsReader   $paymentDetailsReader
-     * @param RequestStack           $request
-     * @param ConfigurationService   $configurationFactor
      *
      * @throws \OpenPayU_Exception_Configuration
      */
-    public function __construct(FinalizeTokenGenerator $finalizeTokenGenerator, PaymentDetailsReader $paymentDetailsReader, RequestStack $request, ConfigurationService $configurationFactor)
+    public function __construct(private readonly FinalizeTokenGenerator $finalizeTokenGenerator, private readonly PaymentDetailsReader $paymentDetailsReader, RequestStack $request, ConfigurationService $configurationFactor)
     {
-        $this->finalizeTokenGenerator = $finalizeTokenGenerator;
-        $this->paymentDetailsReader = $paymentDetailsReader;
         $this->request = $request->getCurrentRequest();
         $configurationFactor->initialize();
     }
 
     /**
-     * @param AsyncPaymentTransactionStruct $asyncPaymentTransactionStruct
-     * @param SalesChannelContext           $salesChannelContext
      *
      * @return OrderStruct
      */
@@ -73,8 +58,6 @@ class OrderCreate
     }
 
     /**
-     * @param OrderStruct                   $order
-     * @param AsyncPaymentTransactionStruct $asyncPaymentTransactionStruct
      *
      * @return OrderStruct
      */
@@ -87,9 +70,6 @@ class OrderCreate
     }
 
     /**
-     * @param OrderStruct                   $order
-     * @param AsyncPaymentTransactionStruct $asyncPaymentTransactionStruct
-     * @param SalesChannelContext           $salesChannelContext
      *
      * @return OrderStruct
      */
@@ -107,8 +87,6 @@ class OrderCreate
     }
 
     /**
-     * @param OrderStruct                   $order
-     * @param AsyncPaymentTransactionStruct $asyncPaymentTransactionStruct
      *
      * @return OrderStruct
      */
@@ -117,13 +95,10 @@ class OrderCreate
         $products = $asyncPaymentTransactionStruct->getOrder()->getLineItems()->getElements();
         /** @var OrderLineItemEntity $element */
         foreach ($products as $element) {
-            if (!$element->getUnitPrice()){
-                continue;
-            }
             $product = (new Product())
                 ->setName($element->getLabel())
                 ->setQuantity($element->getQuantity())
-                ->setUnitPrice($element->getUnitPrice() * 100)
+                ->setUnitPrice(($element->getUnitPrice() ?? 0) * 100)
                 ->setVirtual(($element->getType() !== 'product'))
                 ->setListingDate($element->getCreatedAt());
 
@@ -134,9 +109,6 @@ class OrderCreate
     }
 
     /**
-     * @param OrderStruct                   $order
-     * @param AsyncPaymentTransactionStruct $asyncPaymentTransactionStruct
-     * @param SalesChannelContext           $salesChannelContext
      *
      * @return OrderStruct
      */
@@ -145,7 +117,7 @@ class OrderCreate
         $customer = $asyncPaymentTransactionStruct->getOrder()->getOrderCustomer();
         try {
             $address = $this->paymentDetailsReader->getOrderAddressEntity($asyncPaymentTransactionStruct->getOrder()->getBillingAddressId());
-        } catch (\Exception $exception) {
+        } catch (\Exception) {
             $address = null;
         }
 

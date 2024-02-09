@@ -13,7 +13,7 @@ namespace Crehler\PayU\Util;
 
 class VendorLoader
 {
-    const AUTOLOAD_PATCH = __DIR__ . '/../../vendor/autoload.php';
+    final const AUTOLOAD_PATCH = __DIR__ . '/../../vendor/autoload.php';
 
     public function loadOpenPayU()
     {

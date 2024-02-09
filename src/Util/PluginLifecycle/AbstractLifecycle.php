@@ -11,13 +11,13 @@
 
 namespace Crehler\PayU\Util\PluginLifecycle;
 
+use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Crehler\PayU\Struct\DefaultSettings;
 use Crehler\PayU\Util\PaymentMethodUtil;
 use Crehler\PayU\Util\PayuMethodFinder;
 use Crehler\PayU\Util\RuleUtil;
 use Crehler\PayU\Util\TransactionFieldsUtil;
 use Shopware\Core\Framework\Context;
-use Shopware\Core\Framework\DataAbstractionLayer\EntityRepositoryInterface;
 use Shopware\Core\Framework\Plugin\Context\InstallContext;
 use Shopware\Core\Framework\Plugin\Util\PluginIdProvider;
 use Shopware\Core\Framework\Uuid\Uuid;
@@ -44,7 +44,7 @@ abstract class AbstractLifecycle
      */
     protected $systemConfigService;
 
-    /** @var EntityRepositoryInterface */
+    /** @var EntityRepository */
     protected $systemConfigRepository;
 
     /** @var TransactionFieldsUtil */
@@ -52,9 +52,6 @@ abstract class AbstractLifecycle
 
     /**
      * AbstractLifecycle constructor.
-     *
-     * @param ContainerInterface $container
-     * @param InstallContext     $lifecycleContext
      */
     public function __construct(ContainerInterface $container, InstallContext $lifecycleContext)
     {
@@ -64,13 +61,13 @@ abstract class AbstractLifecycle
 
         $this->systemConfigRepository = $container->get('system_config.repository');
 
-        /** @var EntityRepositoryInterface $paymentRepository */
+        /** @var EntityRepository $paymentRepository */
         $paymentRepository = $container->get('payment_method.repository');
 
-        /** @var EntityRepositoryInterface $ruleRepository */
+        /** @var EntityRepository $ruleRepository */
         $ruleRepository = $container->get('rule.repository');
 
-        /** @var EntityRepositoryInterface $currencyRepository */
+        /** @var EntityRepository $currencyRepository */
         $currencyRepository = $container->get('currency.repository');
 
         $ruleUtil = new RuleUtil(
@@ -92,7 +89,7 @@ abstract class AbstractLifecycle
             $methodFinder
         );
 
-        /** @var EntityRepositoryInterface $customFieldRepository */
+        /** @var EntityRepository $customFieldRepository */
         $customFieldRepository = $container->get('custom_field.repository');
 
         $this->transactionFieldsUtil = new TransactionFieldsUtil(

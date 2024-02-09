@@ -11,8 +11,8 @@
 
 namespace Crehler\PayU\Util;
 
+use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Core\Framework\Context;
-use Shopware\Core\Framework\DataAbstractionLayer\EntityRepositoryInterface;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
 use Shopware\Core\Framework\Rule\Container\AndRule;
@@ -21,24 +21,20 @@ use Shopware\Core\System\Currency\Rule\CurrencyRule;
 
 class RuleUtil
 {
-    const RULE_NAME = 'PayU only PLN';
+    final const RULE_NAME = 'PayU only PLN';
 
-    /** @var EntityRepositoryInterface */
+    /** @var EntityRepository */
     private $ruleRepository;
 
-    /** @var EntityRepositoryInterface */
+    /** @var EntityRepository */
     private $currencyRepository;
 
-    /** @var Context */
-    private $context;
-
-    public function __construct(EntityRepositoryInterface $ruleRepository,
-                                EntityRepositoryInterface $currencyRepository,
-                                Context $context
+    public function __construct(EntityRepository $ruleRepository,
+                                EntityRepository $currencyRepository,
+                                private readonly Context $context
     ) {
         $this->ruleRepository = $ruleRepository;
         $this->currencyRepository = $currencyRepository;
-        $this->context = $context;
     }
 
     /**

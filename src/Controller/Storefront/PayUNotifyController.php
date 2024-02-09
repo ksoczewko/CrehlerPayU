@@ -24,46 +24,18 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * Class PayUNotifyController
  *
- * @RouteScope(scopes={"storefront"})
+ * @Route(defaults={"_routeScope"={"storefront"}})
  */
 class PayUNotifyController extends StorefrontController
 {
-    /** @var FinalizeTokenGenerator */
-    private $finalizeTokenGenerator;
-
-    /** @var PayUPayment */
-    private $payUPayment;
-
-    /** @var LoggerInterface */
-    private $logger;
-
     /**
      * PayUNotifyController constructor.
-     *
-     * @param FinalizeTokenGenerator $finalizeTokenGenerator
-     * @param PayUPayment $payUPayment
-     * @param LoggerInterface $logger
      */
-    public function __construct(
-        FinalizeTokenGenerator $finalizeTokenGenerator,
-        PayUPayment            $payUPayment,
-        LoggerInterface        $logger
-    )
+    public function __construct(private readonly FinalizeTokenGenerator $finalizeTokenGenerator, private readonly PayUPayment            $payUPayment, private readonly LoggerInterface        $logger)
     {
-        $this->finalizeTokenGenerator = $finalizeTokenGenerator;
-        $this->payUPayment = $payUPayment;
-        $this->logger = $logger;
     }
 
-    /**
-     * @Route(
-     *     "/crehler/payu/notify",
-     *     name="action.crehler.payu.notify",
-     *     options={"seo"="false"},
-     *     methods={"POST"},
-     *     defaults={"csrf_protected"=false}
-     *     )
-     */
+    #[Route(path: '/crehler/payu/notify', name: 'action.crehler.payu.notify', options: ['seo' => 'false'], methods: ['POST'], defaults: ['csrf_protected' => false])]
     public function notifyAction(
         Request             $request,
         SalesChannelContext $salesChannelContext): JsonResponse

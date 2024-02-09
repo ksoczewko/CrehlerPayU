@@ -11,48 +11,30 @@
 
 namespace Crehler\PayU\Util;
 
+use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Crehler\PayU\Core\Checkout\Payment\PayUPayment;
 use Crehler\PayU\CrehlerPayU;
 use Shopware\Core\Framework\Context;
-use Shopware\Core\Framework\DataAbstractionLayer\EntityRepositoryInterface;
 use Shopware\Core\Framework\Plugin\Util\PluginIdProvider;
 use Shopware\Core\Framework\Uuid\Uuid;
 
 class PaymentMethodUtil
 {
     /**
-     * @var EntityRepositoryInterface
+     * @var EntityRepository
      */
     private $paymentRepository;
 
-    /**
-     * @var Context
-     */
-    private $context;
-
-    /** @var RuleUtil */
-    private $ruleUtil;
-
-    /** @var PluginIdProvider $pluginIdProvider */
-    private $pluginIdProvider;
-
-    /** @var PayuMethodFinder */
-    private $methodFinder;
-
-    public function __construct(EntityRepositoryInterface $paymentRepository, Context $context, RuleUtil $ruleUtil, PluginIdProvider $pluginIdProvider, PayuMethodFinder $methodFinder)
+    public function __construct(EntityRepository $paymentRepository, private readonly Context $context, private readonly RuleUtil $ruleUtil, private readonly PluginIdProvider $pluginIdProvider, private readonly PayuMethodFinder $methodFinder)
     {
         $this->paymentRepository = $paymentRepository;
-        $this->context = $context;
-        $this->ruleUtil = $ruleUtil;
-        $this->pluginIdProvider = $pluginIdProvider;
-        $this->methodFinder = $methodFinder;
     }
 
     public function createPaymentMethod(): ?string
     {
         try {
             $ruleId = $this->ruleUtil->getRuleId();
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             $ruleId = null;
         }
 
@@ -90,9 +72,6 @@ class PaymentMethodUtil
         return $payUPaymentId;
     }
 
-    /**
-     * @param bool $active
-     */
     public function setPaymentMethodIsActive(bool $active): void
     {
         $paymentMethodId = $this->methodFinder->getPayUPaymentMethodId($this->context);

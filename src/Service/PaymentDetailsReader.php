@@ -11,10 +11,11 @@
 
 namespace Crehler\PayU\Service;
 
+use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
+use Shopware\Core\Framework\DataAbstractionLayer\Exception\InconsistentCriteriaIdsException;
 use Crehler\PayU\Service\PayU\ConfigurationService;
 use Shopware\Core\Checkout\Order\Aggregate\OrderAddress\OrderAddressEntity;
 use Shopware\Core\Framework\Context;
-use Shopware\Core\Framework\DataAbstractionLayer\EntityRepositoryInterface;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\System\Country\CountryEntity;
 use Shopware\Core\System\Language\LanguageEntity;
@@ -27,46 +28,34 @@ use Shopware\Core\System\SystemConfig\SystemConfigService;
  */
 class PaymentDetailsReader implements PaymentDetailsReaderInterface
 {
-    /** @var EntityRepositoryInterface */
+    /** @var EntityRepository */
     private $languageRepository;
 
-    /** @var EntityRepositoryInterface */
+    /** @var EntityRepository */
     private $localeRepository;
 
-    /** @var EntityRepositoryInterface */
+    /** @var EntityRepository */
     private $orderAddressRepository;
 
-    /** @var EntityRepositoryInterface */
+    /** @var EntityRepository */
     private $countryRepository;
-
-    /** @var SystemConfigService */
-    private $configurationService;
 
     /**
      * PaymentDetailsReader constructor.
-     *
-     * @param EntityRepositoryInterface $languageRepository
-     * @param EntityRepositoryInterface $localeRepository
-     * @param EntityRepositoryInterface $orderAddressRepository
-     * @param EntityRepositoryInterface $countryRepository
-     * @param SystemConfigService $configurationService
      */
-    public function __construct(EntityRepositoryInterface $languageRepository,
-                                EntityRepositoryInterface $localeRepository,
-                                EntityRepositoryInterface $orderAddressRepository,
-                                EntityRepositoryInterface $countryRepository,
-                                SystemConfigService       $configurationService)
+    public function __construct(EntityRepository $languageRepository,
+                                EntityRepository $localeRepository,
+                                EntityRepository $orderAddressRepository,
+                                EntityRepository $countryRepository,
+                                private readonly SystemConfigService       $configurationService)
     {
         $this->languageRepository = $languageRepository;
         $this->localeRepository = $localeRepository;
         $this->orderAddressRepository = $orderAddressRepository;
         $this->countryRepository = $countryRepository;
-        $this->configurationService = $configurationService;
     }
 
     /**
-     * @param SalesChannelContext $salesChannelContext
-     *
      * @return string
      */
     public function getLanguageCode(SalesChannelContext $salesChannelContext): string
@@ -75,7 +64,7 @@ class PaymentDetailsReader implements PaymentDetailsReaderInterface
         try {
             $languageEntity = $this->getLanguageEntity($salesChannelContext->getSalesChannel()->getLanguageId());
             $localeEntity = $this->getLocaleEntity($languageEntity->getLocaleId());
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             return 'en';
         }
 
@@ -89,10 +78,9 @@ class PaymentDetailsReader implements PaymentDetailsReaderInterface
     }
 
     /**
-     * @param string $orderAddressID
      *
      * @return OrderAddressEntity
-     * @throws \Shopware\Core\Framework\DataAbstractionLayer\Exception\InconsistentCriteriaIdsException
+     * @throws InconsistentCriteriaIdsException
      *
      */
     public function getOrderAddressEntity(string $orderAddressID): OrderAddressEntity
@@ -106,15 +94,13 @@ class PaymentDetailsReader implements PaymentDetailsReaderInterface
     }
 
     /**
-     * @param string $countryID
-     *
      * @return string
      */
     public function getCountryCode(string $countryID): string
     {
         try {
             $countryEntity = $this->getCountryEntity($countryID);
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             return '';
         }
 
@@ -142,10 +128,9 @@ class PaymentDetailsReader implements PaymentDetailsReaderInterface
     }
 
     /**
-     * @param string $languageID
      *
      * @return LanguageEntity
-     * @throws \Shopware\Core\Framework\DataAbstractionLayer\Exception\InconsistentCriteriaIdsException
+     * @throws InconsistentCriteriaIdsException
      *
      */
     private function getLanguageEntity(string $languageID): LanguageEntity
@@ -159,10 +144,9 @@ class PaymentDetailsReader implements PaymentDetailsReaderInterface
     }
 
     /**
-     * @param string $localeID
      *
      * @return LocaleEntity
-     * @throws \Shopware\Core\Framework\DataAbstractionLayer\Exception\InconsistentCriteriaIdsException
+     * @throws InconsistentCriteriaIdsException
      *
      */
     private function getLocaleEntity(string $localeID): LocaleEntity
@@ -176,10 +160,9 @@ class PaymentDetailsReader implements PaymentDetailsReaderInterface
     }
 
     /**
-     * @param string $countryID
      *
      * @return CountryEntity
-     * @throws \Shopware\Core\Framework\DataAbstractionLayer\Exception\InconsistentCriteriaIdsException
+     * @throws InconsistentCriteriaIdsException
      *
      */
     private function getCountryEntity(string $countryID): CountryEntity

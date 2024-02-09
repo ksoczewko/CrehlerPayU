@@ -86,8 +86,6 @@ class Buyer extends PayUStruct
     }
 
     /**
-     * @param string $customerIp
-     *
      * @return Buyer
      */
     public function setCustomerIp(string $customerIp): Buyer
@@ -106,8 +104,6 @@ class Buyer extends PayUStruct
     }
 
     /**
-     * @param string $extCustomerId
-     *
      * @return Buyer
      */
     public function setExtCustomerId(string $extCustomerId): Buyer
@@ -126,8 +122,6 @@ class Buyer extends PayUStruct
     }
 
     /**
-     * @param string $email
-     *
      * @return Buyer
      */
     public function setEmail(string $email): Buyer
@@ -146,8 +140,6 @@ class Buyer extends PayUStruct
     }
 
     /**
-     * @param string $phone
-     *
      * @return Buyer
      */
     public function setPhone(string $phone): Buyer
@@ -166,8 +158,6 @@ class Buyer extends PayUStruct
     }
 
     /**
-     * @param string $firstName
-     *
      * @return Buyer
      */
     public function setFirstName(string $firstName): Buyer
@@ -186,8 +176,6 @@ class Buyer extends PayUStruct
     }
 
     /**
-     * @param string $lastName
-     *
      * @return Buyer
      */
     public function setLastName(string $lastName): Buyer
@@ -206,8 +194,6 @@ class Buyer extends PayUStruct
     }
 
     /**
-     * @param string $nin
-     *
      * @return Buyer
      */
     public function setNin(string $nin): Buyer
@@ -230,8 +216,6 @@ class Buyer extends PayUStruct
     }
 
     /**
-     * @param string $language
-     *
      * @return Buyer
      */
     public function setLanguage(string $language): Buyer
@@ -250,8 +234,6 @@ class Buyer extends PayUStruct
     }
 
     /**
-     * @param BuyerDelivery $delivery
-     *
      * @return Buyer
      */
     public function setDelivery(BuyerDelivery $delivery): Buyer

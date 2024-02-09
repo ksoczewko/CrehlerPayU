@@ -26,42 +26,27 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class ConfigurationService
 {
-    public const CONFIG_PLUGIN_PREFIX = 'CrehlerPayU.config.';
-    public const CONFIG_PAYMENT_METHOD_ID = 'paymentMethodId';
-    public const CONFIG_ORDER_DESCRIPTION_SHORT = 'orderDescriptionShort';
-    public const CONFIG_ORDER_DESCRIPTION_LONG = 'orderDescriptionLong';
-    public const CONFIG_SECURE = 'secure';
-    public const CONFIG_POS_ID = 'posId';
-    public const CONFIG_MD5_KEY = 'md5Key';
-    public const CONFIG_CLIENT_ID = 'clientId';
-    public const CONFIG_CLIENT_SECRET = 'clientSecret';
-    public const CONFIG_SANDBOX = 'sandbox';
-    public const CONFIG_SANDBOX_POS_ID = 'sandboxPosId';
-    public const CONFIG_SANDBOX__MD5_KEY = 'sandboxMd5Key';
-    public const CONFIG_SANDBOX_CLIENT_ID = 'sandboxClientId';
-    public const CONFIG_SANDBOX_CLIENT_SECRET = 'sandboxClientSecret';
-
-    /** @var SystemConfigService */
-    private $configurationService;
-
-    /** @var ParameterBagInterface */
-    private $parameterBag;
-
-    /** @var Logger */
-    private $logger;
+    final public const CONFIG_PLUGIN_PREFIX = 'CrehlerPayU.config.';
+    final public const CONFIG_PAYMENT_METHOD_ID = 'paymentMethodId';
+    final public const CONFIG_ORDER_DESCRIPTION_SHORT = 'orderDescriptionShort';
+    final public const CONFIG_ORDER_DESCRIPTION_LONG = 'orderDescriptionLong';
+    final public const CONFIG_SECURE = 'secure';
+    final public const CONFIG_POS_ID = 'posId';
+    final public const CONFIG_MD5_KEY = 'md5Key';
+    final public const CONFIG_CLIENT_ID = 'clientId';
+    final public const CONFIG_CLIENT_SECRET = 'clientSecret';
+    final public const CONFIG_SANDBOX = 'sandbox';
+    final public const CONFIG_SANDBOX_POS_ID = 'sandboxPosId';
+    final public const CONFIG_SANDBOX__MD5_KEY = 'sandboxMd5Key';
+    final public const CONFIG_SANDBOX_CLIENT_ID = 'sandboxClientId';
+    final public const CONFIG_SANDBOX_CLIENT_SECRET = 'sandboxClientSecret';
 
     /**
      * ConfigurationFactor constructor.
-     *
-     * @param SystemConfigService $configurationService
-     * @param VendorLoader        $vendorLoader
      */
-    public function __construct(SystemConfigService $configurationService, VendorLoader $vendorLoader, ParameterBagInterface $parameterBag, Logger $logger)
+    public function __construct(private readonly SystemConfigService $configurationService, VendorLoader $vendorLoader, private readonly ParameterBagInterface $parameterBag, private readonly Logger $logger)
     {
         $vendorLoader->loadOpenPayU();
-        $this->configurationService = $configurationService;
-        $this->parameterBag = $parameterBag;
-        $this->logger = $logger;
     }
 
     /**
@@ -135,11 +120,11 @@ class ConfigurationService
      */
     public function checkSavedCredentials(?Request $request = null)
     {
-        $request = $request ?? Request::createFromGlobals();
+        $request ??= Request::createFromGlobals();
 
         try {
             $this->initialize();
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             return false;
         }
 
@@ -156,7 +141,7 @@ class ConfigurationService
      */
     public function checkRequestCredentials(?Request $request = null)
     {
-        $request = $request ?? Request::createFromGlobals();
+        $request ??= Request::createFromGlobals();
 
         try {
             if ($request->get('checkSandbox')) {
@@ -176,7 +161,7 @@ class ConfigurationService
                     $request->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_CLIENT_SECRET)
                 );
             }
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             return false;
         }
 
@@ -187,7 +172,6 @@ class ConfigurationService
      * PayU does not provide a test method.
      * So we create and cancel the order to test the credentials.
      *
-     * @param Request $request
      *
      * @return bool
      */

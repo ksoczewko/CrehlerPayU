@@ -46,8 +46,6 @@ class DefaultSettings extends Struct
     }
 
     /**
-     * @param string $orderDescriptionShort
-     *
      * @return DefaultSettings
      */
     public function setOrderDescriptionShort(string $orderDescriptionShort): DefaultSettings
@@ -66,8 +64,6 @@ class DefaultSettings extends Struct
     }
 
     /**
-     * @param string $orderDescriptionLong
-     *
      * @return DefaultSettings
      */
     public function setOrderDescriptionLong(string $orderDescriptionLong): DefaultSettings

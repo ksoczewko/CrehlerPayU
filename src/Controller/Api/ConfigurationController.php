@@ -23,44 +23,18 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @RouteScope(scopes={"api"})
+ * @Route(defaults={"_routeScope"={"api"}})
  */
 class ConfigurationController extends AbstractController
 {
-    /** @var LoggerInterface */
-    private $logger;
-
-    /** @var ConfigurationService */
-    private $settingsService;
-
-    /** @var PayuMethodFinder */
-    private $methodFinder;
-
-    private SystemConfigService $systemConfigService;
-
-    public function __construct(
-        LoggerInterface $logger,
-        ConfigurationService $settingsService,
-        PayuMethodFinder $methodFinder,
-        SystemConfigService $systemConfigService
-    ) {
-        $this->logger = $logger;
-        $this->settingsService = $settingsService;
-        $this->methodFinder = $methodFinder;
-        $this->systemConfigService = $systemConfigService;
+    public function __construct(private readonly LoggerInterface $logger, private readonly ConfigurationService $settingsService, private readonly PayuMethodFinder $methodFinder, private readonly SystemConfigService $systemConfigService)
+    {
     }
 
     /**
-     * @Route(
-     *     "/api/crehler/payu/sales-channel-payment-configuration-notification",
-     *     name="api.crehler.payu.sales-channel-payment-configuration-notification",
-     *     methods={"POST"}
-     *     )
-     *
-     * @param Request $request
-     * @param Context $context
      * @return JsonResponse
      */
+    #[Route(path: '/api/crehler/payu/sales-channel-payment-configuration-notification', name: 'api.crehler.payu.sales-channel-payment-configuration-notification', methods: ['POST'])]
     public function salesChannelPaymentConfigurationNotification(Request $request, Context $context): JsonResponse
     {
         $paymentMethodIds = $request->get('paymentMethodIds');
@@ -77,21 +51,16 @@ class ConfigurationController extends AbstractController
     }
 
     /**
-     * @Route(
-     *     "/api/crehler/payu/check-credentials",
-     *     name="api.crehler.payu.check-credentials",
-     *     methods={"POST"}
-     *     )
      *
-     * @param Request $request
      *
      * @return JsonResponse
      */
+    #[Route(path: '/api/crehler/payu/check-credentials', name: 'api.crehler.payu.check-credentials', methods: ['POST'])]
     public function checkCredentials(Request $request): JsonResponse
     {
         try {
             $result = $this->settingsService->checkRequestCredentials($request);
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             $result = false;
         }
 

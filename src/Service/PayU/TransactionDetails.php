@@ -11,13 +11,13 @@
 
 namespace Crehler\PayU\Service\PayU;
 
+use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Crehler\PayU\Entity\OrderTransactionRepository;
 use OpenPayU_Exception;
 use OpenPayU_Retrieve;
 use Shopware\Core\Checkout\Order\Aggregate\OrderTransaction\OrderTransactionEntity;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityCollection;
-use Shopware\Core\Framework\DataAbstractionLayer\EntityRepositoryInterface;
 use Shopware\Core\Framework\DataAbstractionLayer\Exception\InconsistentCriteriaIdsException;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
@@ -27,26 +27,22 @@ use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
  */
 class TransactionDetails
 {
-    /** @var EntityRepositoryInterface */
+    /** @var EntityRepository */
     private $transactionEntity;
 
     /**
      * TransactionDetails constructor.
      *
-     * @param ConfigurationService      $configurationFactor
-     * @param EntityRepositoryInterface $transactionEntity
      *
      * @throws \OpenPayU_Exception_Configuration
      */
-    public function __construct(ConfigurationService $configurationFactor, EntityRepositoryInterface $transactionEntity)
+    public function __construct(ConfigurationService $configurationFactor, EntityRepository $transactionEntity)
     {
         $configurationFactor->initialize();
         $this->transactionEntity = $transactionEntity;
     }
 
     /**
-     * @param string  $orderID
-     * @param Context $context
      *
      * @throws InconsistentCriteriaIdsException
      *
@@ -74,7 +70,7 @@ class TransactionDetails
 
         try {
             $response = \OpenPayU_Order::retrieveTransaction($payuTransactionID);
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             return [];
         }
 
@@ -89,8 +85,6 @@ class TransactionDetails
     }
 
     /**
-     * @param \OpenPayU_Result $response
-     *
      * @return array
      */
     private function responseToArray(\OpenPayU_Result $response): array
@@ -99,8 +93,6 @@ class TransactionDetails
     }
 
     /**
-     * @param string $payMethodKey
-     *
      * @return array
      */
     private function getPaymentMethod(string $payMethodKey): array
@@ -124,7 +116,7 @@ class TransactionDetails
             if ($response->getStatus() == 'SUCCESS') {
                 $methods = $this->responseToArray($response);
             }
-        } catch (OpenPayU_Exception $e) {
+        } catch (OpenPayU_Exception) {
             return [];
         }
         if (empty($methods)) {

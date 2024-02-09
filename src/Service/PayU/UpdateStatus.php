@@ -22,7 +22,6 @@ class UpdateStatus
     /**
      * UpdateStatus constructor.
      *
-     * @param ConfigurationService $configurationFactor
      *
      * @throws \OpenPayU_Exception_Configuration
      */
@@ -32,8 +31,6 @@ class UpdateStatus
     }
 
     /**
-     * @param string $orderID
-     *
      * @throws \OpenPayU_Exception
      */
     public function complete(string $orderID)

@@ -11,9 +11,10 @@
 
 namespace Crehler\PayU\Util;
 
+use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
+use Shopware\Core\Framework\DataAbstractionLayer\Exception\InconsistentCriteriaIdsException;
 use Crehler\PayU\Entity\OrderTransactionRepository;
 use Shopware\Core\Framework\Context;
-use Shopware\Core\Framework\DataAbstractionLayer\EntityRepositoryInterface;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\MultiFilter;
@@ -22,20 +23,16 @@ use Shopware\Core\System\CustomField\CustomFieldTypes;
 
 class TransactionFieldsUtil
 {
-    /** @var EntityRepositoryInterface */
+    /** @var EntityRepository */
     private $customFieldRepository;
 
-    /** @var Context */
-    private $context;
-
-    public function __construct(EntityRepositoryInterface $customFieldRepository, Context $context)
+    public function __construct(EntityRepository $customFieldRepository, private readonly Context $context)
     {
         $this->customFieldRepository = $customFieldRepository;
-        $this->context = $context;
     }
 
     /**
-     * @throws \Shopware\Core\Framework\DataAbstractionLayer\Exception\InconsistentCriteriaIdsException
+     * @throws InconsistentCriteriaIdsException
      */
     public function createTransactionFields(): void
     {
@@ -60,7 +57,7 @@ class TransactionFieldsUtil
     }
 
     /**
-     * @throws \Shopware\Core\Framework\DataAbstractionLayer\Exception\InconsistentCriteriaIdsException
+     * @throws InconsistentCriteriaIdsException
      */
     public function removeTransactionFields(): void
     {
@@ -70,15 +67,13 @@ class TransactionFieldsUtil
             return;
         }
 
-        $ids = array_map(static function ($id) {
-            return ['id' => $id];
-        }, $customFieldIds->getIds());
+        $ids = array_map(static fn($id) => ['id' => $id], $customFieldIds->getIds());
 
         $this->customFieldRepository->delete($ids, $this->context);
     }
 
     /**
-     * @throws \Shopware\Core\Framework\DataAbstractionLayer\Exception\InconsistentCriteriaIdsException
+     * @throws InconsistentCriteriaIdsException
      *
      * @return IdSearchResult
      */

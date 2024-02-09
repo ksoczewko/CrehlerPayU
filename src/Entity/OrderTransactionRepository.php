@@ -16,6 +16,6 @@ namespace Crehler\PayU\Entity;
  */
 class OrderTransactionRepository
 {
-    const PAYU_EXTERNAL_ID = 'crehler_payu_external_id';
-    const PAYU_PAY_URL = 'crehler_payu_pay_url';
+    final const PAYU_EXTERNAL_ID = 'crehler_payu_external_id';
+    final const PAYU_PAY_URL = 'crehler_payu_pay_url';
 }

@@ -60,8 +60,6 @@ class Product extends PayUStruct
     }
 
     /**
-     * @param string $name
-     *
      * @return Product
      */
     public function setName(string $name): Product
@@ -80,8 +78,6 @@ class Product extends PayUStruct
     }
 
     /**
-     * @param int $unitPrice
-     *
      * @return Product
      */
     public function setUnitPrice(int $unitPrice): Product
@@ -100,8 +96,6 @@ class Product extends PayUStruct
     }
 
     /**
-     * @param int $quantity
-     *
      * @return Product
      */
     public function setQuantity(int $quantity): Product
@@ -120,8 +114,6 @@ class Product extends PayUStruct
     }
 
     /**
-     * @param bool $virtual
-     *
      * @return Product
      */
     public function setVirtual(bool $virtual): Product
@@ -140,8 +132,6 @@ class Product extends PayUStruct
     }
 
     /**
-     * @param \DateTimeInterface $listingDate
-     *
      * @return Product
      */
     public function setListingDate(\DateTimeInterface $listingDate): Product

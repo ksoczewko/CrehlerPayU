@@ -11,10 +11,11 @@
 
 namespace Crehler\PayU\Util\PluginLifecycle;
 
+use Shopware\Core\Framework\DataAbstractionLayer\Exception\InconsistentCriteriaIdsException;
 final class Deactivate extends AbstractLifecycle
 {
     /**
-     * @throws \Shopware\Core\Framework\DataAbstractionLayer\Exception\InconsistentCriteriaIdsException
+     * @throws InconsistentCriteriaIdsException
      */
     public function deactivate()
     {
