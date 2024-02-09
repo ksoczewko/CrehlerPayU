@@ -117,6 +117,9 @@ class OrderCreate
         $products = $asyncPaymentTransactionStruct->getOrder()->getLineItems()->getElements();
         /** @var OrderLineItemEntity $element */
         foreach ($products as $element) {
+            if (!$element->getUnitPrice()){
+                continue;
+            }
             $product = (new Product())
                 ->setName($element->getLabel())
                 ->setQuantity($element->getQuantity())
