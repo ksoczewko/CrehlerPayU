@@ -13,9 +13,12 @@ namespace Crehler\PayU\Service\PayU;
 
 use Crehler\PayU\Util\TestPaymentConfig;
 use Crehler\PayU\Util\VendorLoader;
+use Monolog\Logger;
+use OauthCacheFile;
 use OpenPayU_Configuration;
 use OpenPayU_Order;
 use Shopware\Core\System\SystemConfig\SystemConfigService;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -41,16 +44,24 @@ class ConfigurationService
     /** @var SystemConfigService */
     private $configurationService;
 
+    /** @var ParameterBagInterface */
+    private $parameterBag;
+
+    /** @var Logger */
+    private $logger;
+
     /**
      * ConfigurationFactor constructor.
      *
      * @param SystemConfigService $configurationService
      * @param VendorLoader        $vendorLoader
      */
-    public function __construct(SystemConfigService $configurationService, VendorLoader $vendorLoader)
+    public function __construct(SystemConfigService $configurationService, VendorLoader $vendorLoader, ParameterBagInterface $parameterBag, Logger $logger)
     {
         $vendorLoader->loadOpenPayU();
         $this->configurationService = $configurationService;
+        $this->parameterBag = $parameterBag;
+        $this->logger = $logger;
     }
 
     /**
@@ -62,17 +73,21 @@ class ConfigurationService
             $sandbox = (int) $this->configurationService->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_SANDBOX);
         }
         if ($sandbox) {
-            OpenPayU_Configuration::setEnvironment(self::CONFIG_SANDBOX);
-            OpenPayU_Configuration::setMerchantPosId($this->configurationService->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_SANDBOX_POS_ID));
-            OpenPayU_Configuration::setSignatureKey($this->configurationService->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_SANDBOX__MD5_KEY));
-            OpenPayU_Configuration::setOauthClientId($this->configurationService->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_SANDBOX_CLIENT_ID));
-            OpenPayU_Configuration::setOauthClientSecret($this->configurationService->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_SANDBOX_CLIENT_SECRET));
+            $this->initializePayUStaticConfiguration(
+                true,
+                $this->configurationService->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_SANDBOX_POS_ID),
+                $this->configurationService->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_SANDBOX__MD5_KEY),
+                $this->configurationService->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_SANDBOX_CLIENT_ID),
+                $this->configurationService->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_SANDBOX_CLIENT_SECRET)
+            );
         } else {
-            OpenPayU_Configuration::setEnvironment(self::CONFIG_SECURE);
-            OpenPayU_Configuration::setMerchantPosId($this->configurationService->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_POS_ID));
-            OpenPayU_Configuration::setSignatureKey($this->configurationService->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_MD5_KEY));
-            OpenPayU_Configuration::setOauthClientId($this->configurationService->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_CLIENT_ID));
-            OpenPayU_Configuration::setOauthClientSecret($this->configurationService->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_CLIENT_SECRET));
+            $this->initializePayUStaticConfiguration(
+                false,
+                $this->configurationService->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_POS_ID),
+                $this->configurationService->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_MD5_KEY),
+                $this->configurationService->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_CLIENT_ID),
+                $this->configurationService->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_CLIENT_SECRET)
+            );
         }
     }
 
@@ -145,17 +160,21 @@ class ConfigurationService
 
         try {
             if ($request->get('checkSandbox')) {
-                OpenPayU_Configuration::setEnvironment(self::CONFIG_SANDBOX);
-                OpenPayU_Configuration::setMerchantPosId($request->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_SANDBOX_POS_ID));
-                OpenPayU_Configuration::setSignatureKey($request->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_SANDBOX__MD5_KEY));
-                OpenPayU_Configuration::setOauthClientId($request->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_SANDBOX_CLIENT_ID));
-                OpenPayU_Configuration::setOauthClientSecret($request->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_SANDBOX_CLIENT_SECRET));
+                $this->initializePayUStaticConfiguration(
+                    true,
+                    $request->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_SANDBOX_POS_ID),
+                    $request->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_SANDBOX__MD5_KEY),
+                    $request->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_SANDBOX_CLIENT_ID),
+                    $request->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_SANDBOX_CLIENT_SECRET)
+                );
             } else {
-                OpenPayU_Configuration::setEnvironment(self::CONFIG_SECURE);
-                OpenPayU_Configuration::setMerchantPosId($request->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_POS_ID));
-                OpenPayU_Configuration::setSignatureKey($request->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_MD5_KEY));
-                OpenPayU_Configuration::setOauthClientId($request->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_CLIENT_ID));
-                OpenPayU_Configuration::setOauthClientSecret($request->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_CLIENT_SECRET));
+                $this->initializePayUStaticConfiguration(
+                    false,
+                    $request->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_POS_ID),
+                    $request->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_MD5_KEY),
+                    $request->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_CLIENT_ID),
+                    $request->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_CLIENT_SECRET)
+                );
             }
         } catch (\Exception $e) {
             return false;
@@ -178,23 +197,54 @@ class ConfigurationService
         try {
             $response = OpenPayU_Order::create(TestPaymentConfig::getConfiguration($merchantId, $request->getClientIp()));
         } catch (\OpenPayU_Exception $e) {
+            $this->logger->error($e->getMessage());
             return false;
         }
 
         if ($response->getStatus() !== 'SUCCESS') {
+            $this->logger->error("Error while checking the status of the test transaction, returned status: " . $response->getStatus());
             return false;
         }
 
         try {
             $cancelResponse = OpenPayU_Order::cancel($response->getResponse()->orderId);
         } catch (\OpenPayU_Exception $e) {
+            $this->logger->error($e->getMessage());
             return false;
         }
 
         if ($cancelResponse->getStatus() !== 'SUCCESS') {
+            $this->logger->error("Error while canceling the test transaction, returned status: " . $cancelResponse->getStatus());
             return false;
         }
 
         return true;
+    }
+
+    private function initializePayUStaticConfiguration(bool $sandbox, ?string $merchantPosId, ?string $signatureKey, ?string $oauthClientId, ?string $oauthClientSecret)
+    {
+        try {
+            OpenPayU_Configuration::setOauthTokenCache(new OauthCacheFile($this->getCacheDir()));
+            if ($sandbox) {
+                OpenPayU_Configuration::setEnvironment(self::CONFIG_SANDBOX);
+            } else {
+                OpenPayU_Configuration::setEnvironment(self::CONFIG_SECURE);
+            }
+        } catch (\Throwable $e) {
+            $this->logger->error($e->getMessage());
+        }
+        if ($merchantPosId !== null) OpenPayU_Configuration::setMerchantPosId($merchantPosId);
+        if ($signatureKey !== null)OpenPayU_Configuration::setSignatureKey($signatureKey);
+        if ($oauthClientId !== null)OpenPayU_Configuration::setOauthClientId($oauthClientId);
+        if ($oauthClientSecret !== null)OpenPayU_Configuration::setOauthClientSecret($oauthClientSecret);
+    }
+
+    private function getCacheDir()
+    {
+        $dir = $this->parameterBag->get('kernel.cache_dir') . DIRECTORY_SEPARATOR . 'PayU';
+        if (!is_dir($dir)) {
+            mkdir($dir, 0777);
+        }
+        return $dir;
     }
 }
