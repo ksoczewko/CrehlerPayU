@@ -18,6 +18,7 @@ use Crehler\PayU\Struct\OrderCreate as OrderStruct;
 use Crehler\PayU\Struct\Product;
 use Shopware\Core\Checkout\Order\Aggregate\OrderLineItem\OrderLineItemEntity;
 use Shopware\Core\Checkout\Payment\Cart\AsyncPaymentTransactionStruct;
+use Shopware\Core\Framework\Uuid\Uuid;
 use Shopware\Core\System\SalesChannel\SalesChannelContext;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -94,7 +95,7 @@ class OrderCreate
      */
     private function addBasicOrderData(OrderStruct $order, AsyncPaymentTransactionStruct $asyncPaymentTransactionStruct, SalesChannelContext $salesChannelContext): OrderStruct
     {
-        $order->setExtOrderId($asyncPaymentTransactionStruct->getOrder()->getOrderNumber())
+        $order->setExtOrderId($asyncPaymentTransactionStruct->getOrder()->getOrderNumber() . '-'. Uuid::randomHex())
             ->setCustomerIp($this->request->getClientIp())
             ->setMerchantPosId(intval(\OpenPayU_Configuration::getOauthClientId() ? \OpenPayU_Configuration::getOauthClientId() : \OpenPayU_Configuration::getMerchantPosId()))
             ->setDescription($this->paymentDetailsReader->generateShortDescription($asyncPaymentTransactionStruct->getOrder()->getOrderNumber()))

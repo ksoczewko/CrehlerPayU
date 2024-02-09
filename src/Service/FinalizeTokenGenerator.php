@@ -68,7 +68,7 @@ class FinalizeTokenGenerator
             $orderTransactionEntity->getPaymentMethodId(),
             $orderTransactionEntity->getId(),
             null,
-            null,
+            288000,
             null
         );
         $token = $this->tokenFactory->generateToken($tokenStruct);
