@@ -243,7 +243,7 @@ class ConfigurationService
     {
         $dir = $this->parameterBag->get('kernel.cache_dir') . DIRECTORY_SEPARATOR . 'PayU';
         if (!is_dir($dir)) {
-            mkdir($dir, 0777);
+            mkdir($dir, 0777, true);
         }
         return $dir;
     }
