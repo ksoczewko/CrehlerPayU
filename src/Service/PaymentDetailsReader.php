@@ -49,13 +49,13 @@ class PaymentDetailsReader implements PaymentDetailsReaderInterface
      * @param EntityRepositoryInterface $localeRepository
      * @param EntityRepositoryInterface $orderAddressRepository
      * @param EntityRepositoryInterface $countryRepository
-     * @param SystemConfigService       $configurationService
+     * @param SystemConfigService $configurationService
      */
     public function __construct(EntityRepositoryInterface $languageRepository,
                                 EntityRepositoryInterface $localeRepository,
                                 EntityRepositoryInterface $orderAddressRepository,
                                 EntityRepositoryInterface $countryRepository,
-                                SystemConfigService $configurationService)
+                                SystemConfigService       $configurationService)
     {
         $this->languageRepository = $languageRepository;
         $this->localeRepository = $localeRepository;
@@ -78,7 +78,12 @@ class PaymentDetailsReader implements PaymentDetailsReaderInterface
         } catch (\Exception $e) {
             return 'en';
         }
-        $code = explode('_', $localeEntity->getCode());
+
+        if (str_contains($localeEntity->getCode(), '-')) {
+            $code = explode('-', $localeEntity->getCode());
+        } else {
+            $code = explode('_', $localeEntity->getCode());
+        }
 
         return in_array($code[0], $accepted) ? $code[0] : 'en';
     }
@@ -86,9 +91,9 @@ class PaymentDetailsReader implements PaymentDetailsReaderInterface
     /**
      * @param string $orderAddressID
      *
+     * @return OrderAddressEntity
      * @throws \Shopware\Core\Framework\DataAbstractionLayer\Exception\InconsistentCriteriaIdsException
      *
-     * @return OrderAddressEntity
      */
     public function getOrderAddressEntity(string $orderAddressID): OrderAddressEntity
     {
@@ -139,9 +144,9 @@ class PaymentDetailsReader implements PaymentDetailsReaderInterface
     /**
      * @param string $languageID
      *
+     * @return LanguageEntity
      * @throws \Shopware\Core\Framework\DataAbstractionLayer\Exception\InconsistentCriteriaIdsException
      *
-     * @return LanguageEntity
      */
     private function getLanguageEntity(string $languageID): LanguageEntity
     {
@@ -156,9 +161,9 @@ class PaymentDetailsReader implements PaymentDetailsReaderInterface
     /**
      * @param string $localeID
      *
+     * @return LocaleEntity
      * @throws \Shopware\Core\Framework\DataAbstractionLayer\Exception\InconsistentCriteriaIdsException
      *
-     * @return LocaleEntity
      */
     private function getLocaleEntity(string $localeID): LocaleEntity
     {
@@ -173,9 +178,9 @@ class PaymentDetailsReader implements PaymentDetailsReaderInterface
     /**
      * @param string $countryID
      *
+     * @return CountryEntity
      * @throws \Shopware\Core\Framework\DataAbstractionLayer\Exception\InconsistentCriteriaIdsException
      *
-     * @return CountryEntity
      */
     private function getCountryEntity(string $countryID): CountryEntity
     {
