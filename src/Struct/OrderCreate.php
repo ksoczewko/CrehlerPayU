@@ -1,12 +1,13 @@
 <?php
 /**
- * @copyright 2019 Crehler Sp. z o. o.
+ * @copyright 2024 Crehler Sp. z o. o.
  *
  * https://crehler.com/
  * support@crehler.com
  *
  * This file is part of the PayU plugin for Shopware 6.
- * All rights reserved.
+ * License CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/deed.pl) see LICENSE file.
+ *
  */
 
 namespace Crehler\PayU\Struct;
@@ -127,17 +128,11 @@ class OrderCreate extends PayUStruct
      */
     protected $mcpData;
 
-    /**
-     * @return string
-     */
     public function getExtOrderId(): string
     {
         return $this->extOrderId;
     }
 
-    /**
-     * @return OrderCreate
-     */
     public function setExtOrderId(string $extOrderId): OrderCreate
     {
         $this->extOrderId = $extOrderId;
@@ -145,17 +140,11 @@ class OrderCreate extends PayUStruct
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getNotifyUrl(): string
     {
         return $this->notifyUrl;
     }
 
-    /**
-     * @return OrderCreate
-     */
     public function setNotifyUrl(string $notifyUrl): OrderCreate
     {
         $this->notifyUrl = $notifyUrl;
@@ -163,17 +152,11 @@ class OrderCreate extends PayUStruct
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getCustomerIp(): string
     {
         return $this->customerIp;
     }
 
-    /**
-     * @return OrderCreate
-     */
     public function setCustomerIp(string $customerIp): OrderCreate
     {
         $this->customerIp = $customerIp;
@@ -181,17 +164,11 @@ class OrderCreate extends PayUStruct
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getMerchantPosId(): int
     {
         return $this->merchantPosId;
     }
 
-    /**
-     * @return OrderCreate
-     */
     public function setMerchantPosId(int $merchantPosId): OrderCreate
     {
         $this->merchantPosId = $merchantPosId;
@@ -199,17 +176,11 @@ class OrderCreate extends PayUStruct
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getValidityTime(): int
     {
         return $this->validityTime;
     }
 
-    /**
-     * @return OrderCreate
-     */
     public function setValidityTime(int $validityTime): OrderCreate
     {
         $this->validityTime = $validityTime;
@@ -217,17 +188,11 @@ class OrderCreate extends PayUStruct
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getDescription(): string
     {
         return $this->description;
     }
 
-    /**
-     * @return OrderCreate
-     */
     public function setDescription(string $description): OrderCreate
     {
         $this->description = $description;
@@ -235,17 +200,11 @@ class OrderCreate extends PayUStruct
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getAdditionalDescription(): string
     {
         return $this->additionalDescription;
     }
 
-    /**
-     * @return OrderCreate
-     */
     public function setAdditionalDescription(string $additionalDescription): OrderCreate
     {
         $this->additionalDescription = $additionalDescription;
@@ -253,17 +212,11 @@ class OrderCreate extends PayUStruct
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getCurrencyCode(): string
     {
         return $this->currencyCode;
     }
 
-    /**
-     * @return OrderCreate
-     */
     public function setCurrencyCode(string $currencyCode): OrderCreate
     {
         $this->currencyCode = $currencyCode;
@@ -271,17 +224,11 @@ class OrderCreate extends PayUStruct
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getTotalAmount(): int
     {
         return $this->totalAmount;
     }
 
-    /**
-     * @return OrderCreate
-     */
     public function setTotalAmount(int $totalAmount): OrderCreate
     {
         $this->totalAmount = $totalAmount;
@@ -289,17 +236,11 @@ class OrderCreate extends PayUStruct
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getCardOnFile(): string
     {
         return $this->cardOnFile;
     }
 
-    /**
-     * @return OrderCreate
-     */
     public function setCardOnFile(string $cardOnFile): OrderCreate
     {
         $this->cardOnFile = $cardOnFile;
@@ -307,17 +248,11 @@ class OrderCreate extends PayUStruct
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getContinueUrl(): string
     {
         return $this->continueUrl;
     }
 
-    /**
-     * @return OrderCreate
-     */
     public function setContinueUrl(string $continueUrl): OrderCreate
     {
         $this->continueUrl = $continueUrl;
@@ -325,17 +260,11 @@ class OrderCreate extends PayUStruct
         return $this;
     }
 
-    /**
-     * @return Buyer
-     */
     public function getBuyer(): Buyer
     {
         return $this->buyer;
     }
 
-    /**
-     * @return OrderCreate
-     */
     public function setBuyer(Buyer $buyer): OrderCreate
     {
         $this->buyer = $buyer;
@@ -343,9 +272,6 @@ class OrderCreate extends PayUStruct
         return $this;
     }
 
-    /**
-     * @return OrderCreate
-     */
     public function addProduct(Product $product): OrderCreate
     {
         $this->products[] = $product;
@@ -373,17 +299,11 @@ class OrderCreate extends PayUStruct
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getPayMethods(): string
     {
         return $this->payMethods;
     }
 
-    /**
-     * @return OrderCreate
-     */
     public function setPayMethods(string $payMethods): OrderCreate
     {
         $this->payMethods = $payMethods;
@@ -391,9 +311,6 @@ class OrderCreate extends PayUStruct
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
     public function getMcpData()
     {
         return $this->mcpData;

@@ -1,12 +1,13 @@
 <?php
 /**
- * @copyright 2019 Crehler Sp. z o. o.
+ * @copyright 2024 Crehler Sp. z o. o.
  *
  * https://crehler.com/
  * support@crehler.com
  *
  * This file is part of the PayU plugin for Shopware 6.
- * All rights reserved.
+ * License CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/deed.pl) see LICENSE file.
+ *
  */
 
 namespace Crehler\PayU\Struct;
@@ -77,17 +78,11 @@ class Buyer extends PayUStruct
      */
     protected $delivery;
 
-    /**
-     * @return string
-     */
     public function getCustomerIp(): string
     {
         return $this->customerIp;
     }
 
-    /**
-     * @return Buyer
-     */
     public function setCustomerIp(string $customerIp): Buyer
     {
         $this->customerIp = $customerIp;
@@ -95,17 +90,11 @@ class Buyer extends PayUStruct
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getExtCustomerId(): string
     {
         return $this->extCustomerId;
     }
 
-    /**
-     * @return Buyer
-     */
     public function setExtCustomerId(string $extCustomerId): Buyer
     {
         $this->extCustomerId = $extCustomerId;
@@ -113,17 +102,11 @@ class Buyer extends PayUStruct
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getEmail(): string
     {
         return $this->email;
     }
 
-    /**
-     * @return Buyer
-     */
     public function setEmail(string $email): Buyer
     {
         $this->email = $email;
@@ -131,17 +114,11 @@ class Buyer extends PayUStruct
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getPhone(): string
     {
         return $this->phone;
     }
 
-    /**
-     * @return Buyer
-     */
     public function setPhone(string $phone): Buyer
     {
         $this->phone = $phone;
@@ -149,17 +126,11 @@ class Buyer extends PayUStruct
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getFirstName(): string
     {
         return $this->firstName;
     }
 
-    /**
-     * @return Buyer
-     */
     public function setFirstName(string $firstName): Buyer
     {
         $this->firstName = $firstName;
@@ -167,17 +138,11 @@ class Buyer extends PayUStruct
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getLastName(): string
     {
         return $this->lastName;
     }
 
-    /**
-     * @return Buyer
-     */
     public function setLastName(string $lastName): Buyer
     {
         $this->lastName = $lastName;
@@ -185,17 +150,11 @@ class Buyer extends PayUStruct
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getNin(): string
     {
         return $this->nin;
     }
 
-    /**
-     * @return Buyer
-     */
     public function setNin(string $nin): Buyer
     {
         $this->nin = $nin;
@@ -203,9 +162,6 @@ class Buyer extends PayUStruct
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getLanguage(): string
     {
         if (!in_array($this->language, ['en', 'de', 'pl'])) {
@@ -215,9 +171,6 @@ class Buyer extends PayUStruct
         return $this->language;
     }
 
-    /**
-     * @return Buyer
-     */
     public function setLanguage(string $language): Buyer
     {
         $this->language = $language;
@@ -225,17 +178,11 @@ class Buyer extends PayUStruct
         return $this;
     }
 
-    /**
-     * @return BuyerDelivery
-     */
     public function getDelivery(): BuyerDelivery
     {
         return $this->delivery;
     }
 
-    /**
-     * @return Buyer
-     */
     public function setDelivery(BuyerDelivery $delivery): Buyer
     {
         $this->delivery = $delivery;

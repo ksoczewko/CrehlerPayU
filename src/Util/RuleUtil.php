@@ -1,18 +1,19 @@
 <?php
 /**
- * @copyright 2019 Crehler Sp. z o. o.
+ * @copyright 2024 Crehler Sp. z o. o.
  *
  * https://crehler.com/
  * support@crehler.com
  *
  * This file is part of the PayU plugin for Shopware 6.
- * All rights reserved.
+ * License CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/deed.pl) see LICENSE file.
+ *
  */
 
 namespace Crehler\PayU\Util;
 
-use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Core\Framework\Context;
+use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
 use Shopware\Core\Framework\Rule\Container\AndRule;
@@ -21,7 +22,7 @@ use Shopware\Core\System\Currency\Rule\CurrencyRule;
 
 class RuleUtil
 {
-    final const RULE_NAME = 'PayU only PLN';
+    final public const RULE_NAME = 'PayU only PLN';
 
     /** @var EntityRepository */
     private $ruleRepository;
@@ -30,8 +31,8 @@ class RuleUtil
     private $currencyRepository;
 
     public function __construct(EntityRepository $ruleRepository,
-                                EntityRepository $currencyRepository,
-                                private readonly Context $context
+        EntityRepository $currencyRepository,
+        private readonly Context $context
     ) {
         $this->ruleRepository = $ruleRepository;
         $this->currencyRepository = $currencyRepository;
@@ -39,8 +40,6 @@ class RuleUtil
 
     /**
      * @throws \Exception
-     *
-     * @return string|null
      */
     public function getRuleId(): ?string
     {
@@ -54,8 +53,6 @@ class RuleUtil
 
     /**
      * @throws \Exception
-     *
-     * @return string|null
      */
     private function checkRuleExist(): ?string
     {
@@ -71,8 +68,6 @@ class RuleUtil
 
     /**
      * @throws \Exception
-     *
-     * @return string|null
      */
     private function createRule(): ?string
     {
@@ -105,8 +100,6 @@ class RuleUtil
 
     /**
      * @throws \Exception
-     *
-     * @return string
      */
     private function getCurrencyID(): string
     {

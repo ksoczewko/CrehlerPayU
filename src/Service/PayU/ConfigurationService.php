@@ -1,12 +1,13 @@
 <?php
 /**
- * @copyright 2019 Crehler Sp. z o. o.
+ * @copyright 2024 Crehler Sp. z o. o.
  *
  * https://crehler.com/
  * support@crehler.com
  *
  * This file is part of the PayU plugin for Shopware 6.
- * All rights reserved.
+ * License CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/deed.pl) see LICENSE file.
+ *
  */
 
 namespace Crehler\PayU\Service\PayU;
@@ -14,9 +15,6 @@ namespace Crehler\PayU\Service\PayU;
 use Crehler\PayU\Util\TestPaymentConfig;
 use Crehler\PayU\Util\VendorLoader;
 use Monolog\Logger;
-use OauthCacheFile;
-use OpenPayU_Configuration;
-use OpenPayU_Order;
 use Shopware\Core\System\SystemConfig\SystemConfigService;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -53,7 +51,7 @@ class ConfigurationService
     /**
      * @throws \OpenPayU_Exception_Configuration
      */
-    public function initialize(?bool $sandbox = null, string $salesChannel = null): void
+    public function initialize(bool $sandbox = null, string $salesChannel = null): void
     {
         if ($salesChannel === null) {
             $salesChannel = $this->request->getCurrentRequest()?->get('sw-sales-channel-id');
@@ -89,18 +87,18 @@ class ConfigurationService
         $salesChannel = $this->request->getCurrentRequest()?->get('sw-sales-channel-id');
 
         if ($this->configurationService->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_SANDBOX)) {
-            if (strlen($this->configurationService->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_SANDBOX_POS_ID, $salesChannel)) == 0 ||
-                strlen($this->configurationService->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_SANDBOX__MD5_KEY, $salesChannel)) == 0 ||
-                strlen($this->configurationService->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_SANDBOX_CLIENT_ID, $salesChannel)) == 0 ||
-                strlen($this->configurationService->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_SANDBOX_CLIENT_SECRET, $salesChannel)) == 0
+            if (strlen($this->configurationService->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_SANDBOX_POS_ID, $salesChannel)) == 0
+                || strlen($this->configurationService->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_SANDBOX__MD5_KEY, $salesChannel)) == 0
+                || strlen($this->configurationService->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_SANDBOX_CLIENT_ID, $salesChannel)) == 0
+                || strlen($this->configurationService->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_SANDBOX_CLIENT_SECRET, $salesChannel)) == 0
             ) {
                 return false;
             }
         } else {
-            if (strlen($this->configurationService->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_POS_ID, $salesChannel)) == 0 ||
-                strlen($this->configurationService->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_MD5_KEY, $salesChannel)) == 0 ||
-                strlen($this->configurationService->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_CLIENT_ID, $salesChannel)) == 0 ||
-                strlen($this->configurationService->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_CLIENT_SECRET, $salesChannel)) == 0
+            if (strlen($this->configurationService->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_POS_ID, $salesChannel)) == 0
+                || strlen($this->configurationService->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_MD5_KEY, $salesChannel)) == 0
+                || strlen($this->configurationService->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_CLIENT_ID, $salesChannel)) == 0
+                || strlen($this->configurationService->get(self::CONFIG_PLUGIN_PREFIX . self::CONFIG_CLIENT_SECRET, $salesChannel)) == 0
             ) {
                 return false;
             }
@@ -123,11 +121,9 @@ class ConfigurationService
      * Checks the credentials set in the plugin configuration.
      * Useful when verifying payments when adding to sales channel.
      *
-     * @param Request|null $request
-     *
      * @return bool
      */
-    public function checkSavedCredentials(?Request $request = null)
+    public function checkSavedCredentials(Request $request = null)
     {
         $request ??= Request::createFromGlobals();
 
@@ -144,11 +140,9 @@ class ConfigurationService
      * Checks the credentials provided in the request.
      * Used in the "Check Credentials" button in the plugin configuration.
      *
-     * @param Request|null $request
-     *
      * @return bool
      */
-    public function checkRequestCredentials(?Request $request = null)
+    public function checkRequestCredentials(Request $request = null)
     {
         $request ??= Request::createFromGlobals();
 
@@ -181,33 +175,36 @@ class ConfigurationService
      * PayU does not provide a test method.
      * So we create and cancel the order to test the credentials.
      *
-     *
      * @return bool
      */
     protected function checkCredentials(Request $request)
     {
         $merchantId = intval(\OpenPayU_Configuration::getOauthClientId() ? \OpenPayU_Configuration::getOauthClientId() : \OpenPayU_Configuration::getMerchantPosId());
         try {
-            $response = OpenPayU_Order::create(TestPaymentConfig::getConfiguration($merchantId, $request->getClientIp()));
+            $response = \OpenPayU_Order::create(TestPaymentConfig::getConfiguration($merchantId, $request->getClientIp()));
         } catch (\OpenPayU_Exception $e) {
             $this->logger->error($e->getMessage());
+
             return false;
         }
 
         if ($response->getStatus() !== 'SUCCESS') {
-            $this->logger->error("Error while checking the status of the test transaction, returned status: " . $response->getStatus());
+            $this->logger->error('Error while checking the status of the test transaction, returned status: ' . $response->getStatus());
+
             return false;
         }
 
         try {
-            $cancelResponse = OpenPayU_Order::cancel($response->getResponse()->orderId);
+            $cancelResponse = \OpenPayU_Order::cancel($response->getResponse()->orderId);
         } catch (\OpenPayU_Exception $e) {
             $this->logger->error($e->getMessage());
+
             return false;
         }
 
         if ($cancelResponse->getStatus() !== 'SUCCESS') {
-            $this->logger->error("Error while canceling the test transaction, returned status: " . $cancelResponse->getStatus());
+            $this->logger->error('Error while canceling the test transaction, returned status: ' . $cancelResponse->getStatus());
+
             return false;
         }
 
@@ -217,19 +214,27 @@ class ConfigurationService
     private function initializePayUStaticConfiguration(bool $sandbox, ?string $merchantPosId, ?string $signatureKey, ?string $oauthClientId, ?string $oauthClientSecret)
     {
         try {
-            OpenPayU_Configuration::setOauthTokenCache(new OauthCacheFile($this->getCacheDir()));
+            \OpenPayU_Configuration::setOauthTokenCache(new \OauthCacheFile($this->getCacheDir()));
             if ($sandbox) {
-                OpenPayU_Configuration::setEnvironment(self::CONFIG_SANDBOX);
+                \OpenPayU_Configuration::setEnvironment(self::CONFIG_SANDBOX);
             } else {
-                OpenPayU_Configuration::setEnvironment(self::CONFIG_SECURE);
+                \OpenPayU_Configuration::setEnvironment(self::CONFIG_SECURE);
             }
         } catch (\Throwable $e) {
             $this->logger->error($e->getMessage());
         }
-        if ($merchantPosId !== null) OpenPayU_Configuration::setMerchantPosId($merchantPosId);
-        if ($signatureKey !== null)OpenPayU_Configuration::setSignatureKey($signatureKey);
-        if ($oauthClientId !== null)OpenPayU_Configuration::setOauthClientId($oauthClientId);
-        if ($oauthClientSecret !== null)OpenPayU_Configuration::setOauthClientSecret($oauthClientSecret);
+        if ($merchantPosId !== null) {
+            \OpenPayU_Configuration::setMerchantPosId($merchantPosId);
+        }
+        if ($signatureKey !== null) {
+            \OpenPayU_Configuration::setSignatureKey($signatureKey);
+        }
+        if ($oauthClientId !== null) {
+            \OpenPayU_Configuration::setOauthClientId($oauthClientId);
+        }
+        if ($oauthClientSecret !== null) {
+            \OpenPayU_Configuration::setOauthClientSecret($oauthClientSecret);
+        }
     }
 
     private function getCacheDir()
@@ -238,6 +243,7 @@ class ConfigurationService
         if (!is_dir($dir)) {
             mkdir($dir, 0777, true);
         }
+
         return $dir;
     }
 }

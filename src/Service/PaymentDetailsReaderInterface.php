@@ -1,12 +1,13 @@
 <?php
 /**
- * @copyright 2019 Crehler Sp. z o. o.
+ * @copyright 2024 Crehler Sp. z o. o.
  *
  * https://crehler.com/
  * support@crehler.com
  *
  * This file is part of the PayU plugin for Shopware 6.
- * All rights reserved.
+ * License CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/deed.pl) see LICENSE file.
+ *
  */
 
 namespace Crehler\PayU\Service;
@@ -19,38 +20,13 @@ use Shopware\Core\System\SalesChannel\SalesChannelContext;
  */
 interface PaymentDetailsReaderInterface
 {
-    /**
-     * @param SalesChannelContext $salesChannelContext
-     *
-     * @return string
-     */
     public function getLanguageCode(SalesChannelContext $salesChannelContext): string;
 
-    /**
-     * @param string $orderAddressID
-     *
-     * @return OrderAddressEntity
-     */
     public function getOrderAddressEntity(string $orderAddressID): OrderAddressEntity;
 
-    /**
-     * @param string $countryID
-     *
-     * @return string
-     */
     public function getCountryCode(string $countryID): string;
 
-    /**
-     * @param $orderNumber
-     *
-     * @return string
-     */
     public function generateShortDescription($orderNumber): string;
 
-    /**
-     * @param $orderNumber
-     *
-     * @return string
-     */
     public function generateLongDescription($orderNumber): string;
 }

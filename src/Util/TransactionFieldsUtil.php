@@ -1,20 +1,21 @@
 <?php
 /**
- * @copyright 2019 Crehler Sp. z o. o.
+ * @copyright 2024 Crehler Sp. z o. o.
  *
  * https://crehler.com/
  * support@crehler.com
  *
  * This file is part of the PayU plugin for Shopware 6.
- * All rights reserved.
+ * License CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/deed.pl) see LICENSE file.
+ *
  */
 
 namespace Crehler\PayU\Util;
 
-use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
-use Shopware\Core\Framework\DataAbstractionLayer\Exception\InconsistentCriteriaIdsException;
 use Crehler\PayU\Entity\OrderTransactionRepository;
 use Shopware\Core\Framework\Context;
+use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
+use Shopware\Core\Framework\DataAbstractionLayer\Exception\InconsistentCriteriaIdsException;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\MultiFilter;
@@ -67,15 +68,13 @@ class TransactionFieldsUtil
             return;
         }
 
-        $ids = array_map(static fn($id) => ['id' => $id], $customFieldIds->getIds());
+        $ids = array_map(static fn ($id) => ['id' => $id], $customFieldIds->getIds());
 
         $this->customFieldRepository->delete($ids, $this->context);
     }
 
     /**
      * @throws InconsistentCriteriaIdsException
-     *
-     * @return IdSearchResult
      */
     private function getCustomFieldIds(): IdSearchResult
     {

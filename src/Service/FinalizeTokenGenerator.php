@@ -1,17 +1,17 @@
 <?php
 /**
- * @copyright 2019 Crehler Sp. z o. o.
+ * @copyright 2024 Crehler Sp. z o. o.
  *
  * https://crehler.com/
  * support@crehler.com
  *
  * This file is part of the PayU plugin for Shopware 6.
- * All rights reserved.
+ * License CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/deed.pl) see LICENSE file.
+ *
  */
 
 namespace Crehler\PayU\Service;
 
-use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Core\Checkout\Order\Aggregate\OrderTransaction\OrderTransactionEntity;
 use Shopware\Core\Checkout\Payment\Cart\AsyncPaymentTransactionStruct;
 use Shopware\Core\Checkout\Payment\Cart\Token\TokenFactoryInterfaceV2 as TokenFactoryInterface;
@@ -19,6 +19,7 @@ use Shopware\Core\Checkout\Payment\Cart\Token\TokenStruct;
 use Shopware\Core\Checkout\Payment\Exception\InvalidTransactionException;
 use Shopware\Core\Checkout\Payment\Exception\TokenExpiredException;
 use Shopware\Core\Framework\Context;
+use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Core\Framework\DataAbstractionLayer\Exception\InconsistentCriteriaIdsException;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\System\SalesChannel\SalesChannelContext;
@@ -37,17 +38,12 @@ class FinalizeTokenGenerator
 
     /**
      * FinalizeTokenGenerator constructor.
-     *
-     * @param TokenFactoryInterface     $tokenFactory
      */
     public function __construct(private readonly TokenFactoryInterface $tokenFactory, private readonly RouterInterface $router, EntityRepository $orderTransactionRepository)
     {
         $this->orderTransactionRepository = $orderTransactionRepository;
     }
 
-    /**
-     * @return string
-     */
     public function buildUrl(OrderTransactionEntity $orderTransactionEntity): string
     {
         $tokenStruct = new TokenStruct(
@@ -65,12 +61,9 @@ class FinalizeTokenGenerator
     }
 
     /**
-     *
      * @throws InconsistentCriteriaIdsException
      * @throws InvalidTransactionException
      * @throws TokenExpiredException
-     *
-     * @return AsyncPaymentTransactionStruct
      */
     public function getTransationDetails(
         string $paymentToken,
@@ -84,9 +77,6 @@ class FinalizeTokenGenerator
         return $paymentTransactionStruct;
     }
 
-    /**
-     * @return string
-     */
     private function assembleReturnUrl(string $token): string
     {
         $parameter = ['_sw_payment_token' => $token];
@@ -95,9 +85,7 @@ class FinalizeTokenGenerator
     }
 
     /**
-     *
      * @throws TokenExpiredException
-     * @return TokenStruct
      */
     private function parseToken(string $token): TokenStruct
     {
@@ -113,11 +101,8 @@ class FinalizeTokenGenerator
     }
 
     /**
-     *
      * @throws InvalidTransactionException
      * @throws InconsistentCriteriaIdsException
-     *
-     * @return AsyncPaymentTransactionStruct
      */
     private function getPaymentTransactionStruct(string $orderTransactionId, Context $context): AsyncPaymentTransactionStruct
     {

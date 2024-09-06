@@ -1,12 +1,13 @@
 <?php
 /**
- * @copyright 2019 Crehler Sp. z o. o.
+ * @copyright 2024 Crehler Sp. z o. o.
  *
  * https://crehler.com/
  * support@crehler.com
  *
  * This file is part of the PayU plugin for Shopware 6.
- * All rights reserved.
+ * License CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/deed.pl) see LICENSE file.
+ *
  */
 
 namespace Crehler\PayU\Struct;
@@ -37,17 +38,11 @@ class DefaultSettings extends Struct
         $this->orderDescriptionLong = 'Order fee in the best online store.';
     }
 
-    /**
-     * @return string
-     */
     public function getOrderDescriptionShort(): string
     {
         return $this->orderDescriptionShort;
     }
 
-    /**
-     * @return DefaultSettings
-     */
     public function setOrderDescriptionShort(string $orderDescriptionShort): DefaultSettings
     {
         $this->orderDescriptionShort = $orderDescriptionShort;
@@ -55,17 +50,11 @@ class DefaultSettings extends Struct
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getOrderDescriptionLong(): string
     {
         return $this->orderDescriptionLong;
     }
 
-    /**
-     * @return DefaultSettings
-     */
     public function setOrderDescriptionLong(string $orderDescriptionLong): DefaultSettings
     {
         $this->orderDescriptionLong = $orderDescriptionLong;

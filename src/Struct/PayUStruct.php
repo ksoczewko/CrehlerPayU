@@ -1,12 +1,13 @@
 <?php
 /**
- * @copyright 2019 Crehler Sp. z o. o.
+ * @copyright 2024 Crehler Sp. z o. o.
  *
  * https://crehler.com/
  * support@crehler.com
  *
  * This file is part of the PayU plugin for Shopware 6.
- * All rights reserved.
+ * License CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/deed.pl) see LICENSE file.
+ *
  */
 
 namespace Crehler\PayU\Struct;
@@ -16,9 +17,6 @@ namespace Crehler\PayU\Struct;
  */
 abstract class PayUStruct implements \JsonSerializable
 {
-    /**
-     * @return array
-     */
     public function jsonSerialize(): array
     {
         $data = [];
@@ -38,9 +36,6 @@ abstract class PayUStruct implements \JsonSerializable
         return $data;
     }
 
-    /**
-     * @return array
-     */
     public function toArray(): array
     {
         return json_decode(json_encode($this), true);

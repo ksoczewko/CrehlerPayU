@@ -1,12 +1,13 @@
 <?php
 /**
- * @copyright 2019 Crehler Sp. z o. o.
+ * @copyright 2024 Crehler Sp. z o. o.
  *
  * https://crehler.com/
  * support@crehler.com
  *
  * This file is part of the PayU plugin for Shopware 6.
- * All rights reserved.
+ * License CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/deed.pl) see LICENSE file.
+ *
  */
 
 namespace Crehler\PayU\Struct;
@@ -51,17 +52,11 @@ class Product extends PayUStruct
      */
     protected $listingDate;
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @return Product
-     */
     public function setName(string $name): Product
     {
         $this->name = $name;
@@ -69,17 +64,11 @@ class Product extends PayUStruct
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getUnitPrice(): int
     {
         return $this->unitPrice;
     }
 
-    /**
-     * @return Product
-     */
     public function setUnitPrice(int $unitPrice): Product
     {
         $this->unitPrice = $unitPrice;
@@ -87,17 +76,11 @@ class Product extends PayUStruct
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getQuantity(): int
     {
         return $this->quantity;
     }
 
-    /**
-     * @return Product
-     */
     public function setQuantity(int $quantity): Product
     {
         $this->quantity = $quantity;
@@ -105,17 +88,11 @@ class Product extends PayUStruct
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function getVirtual(): bool
     {
         return $this->virtual;
     }
 
-    /**
-     * @return Product
-     */
     public function setVirtual(bool $virtual): Product
     {
         $this->virtual = $virtual;
@@ -123,17 +100,11 @@ class Product extends PayUStruct
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getListingDate(): string
     {
         return $this->listingDate->format(\DateTimeInterface::RFC3339);
     }
 
-    /**
-     * @return Product
-     */
     public function setListingDate(\DateTimeInterface $listingDate): Product
     {
         $this->listingDate = $listingDate;

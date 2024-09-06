@@ -1,12 +1,14 @@
-<?php declare(strict_types=1);
+<?php
+declare(strict_types=1);
 /**
- * @copyright 2019 Crehler Sp. z o. o.
+ * @copyright 2024 Crehler Sp. z o. o.
  *
  * https://crehler.com/
  * support@crehler.com
  *
  * This file is part of the PayU plugin for Shopware 6.
- * All rights reserved.
+ * License CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/deed.pl) see LICENSE file.
+ *
  */
 
 namespace Crehler\PayU\Controller\Api;
@@ -31,9 +33,6 @@ class ConfigurationController extends AbstractController
     {
     }
 
-    /**
-     * @return JsonResponse
-     */
     #[Route(path: '/api/crehler/payu/sales-channel-payment-configuration-notification', name: 'api.crehler.payu.sales-channel-payment-configuration-notification', methods: ['POST'])]
     public function salesChannelPaymentConfigurationNotification(Request $request, Context $context): JsonResponse
     {
@@ -50,11 +49,6 @@ class ConfigurationController extends AbstractController
         return new JsonResponse(['error' => false, 'sandbox' => $this->settingsService->isSadBox(), 'credentials' => $this->settingsService->checkSavedCredentials($request)]);
     }
 
-    /**
-     *
-     *
-     * @return JsonResponse
-     */
     #[Route(path: '/api/crehler/payu/check-credentials', name: 'api.crehler.payu.check-credentials', methods: ['POST'])]
     public function checkCredentials(Request $request): JsonResponse
     {

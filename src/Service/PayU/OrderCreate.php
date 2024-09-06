@@ -1,12 +1,13 @@
 <?php
 /**
- * @copyright 2019 Crehler Sp. z o. o.
+ * @copyright 2024 Crehler Sp. z o. o.
  *
  * https://crehler.com/
  * support@crehler.com
  *
  * This file is part of the PayU plugin for Shopware 6.
- * All rights reserved.
+ * License CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/deed.pl) see LICENSE file.
+ *
  */
 
 namespace Crehler\PayU\Service\PayU;
@@ -33,7 +34,6 @@ class OrderCreate
     /**
      * OrderCreate constructor.
      *
-     *
      * @throws \OpenPayU_Exception_Configuration
      */
     public function __construct(private readonly FinalizeTokenGenerator $finalizeTokenGenerator, private readonly PaymentDetailsReader $paymentDetailsReader, RequestStack $request, ConfigurationService $configurationFactor)
@@ -42,10 +42,6 @@ class OrderCreate
         $configurationFactor->initialize();
     }
 
-    /**
-     *
-     * @return OrderStruct
-     */
     public function createOrder(AsyncPaymentTransactionStruct $asyncPaymentTransactionStruct, SalesChannelContext $salesChannelContext): OrderStruct
     {
         $order = new OrderStruct();
@@ -57,10 +53,6 @@ class OrderCreate
         return $order;
     }
 
-    /**
-     *
-     * @return OrderStruct
-     */
     private function addOrderUrls(OrderStruct $order, AsyncPaymentTransactionStruct $asyncPaymentTransactionStruct): OrderStruct
     {
         $order->setNotifyUrl($this->finalizeTokenGenerator->buildUrl($asyncPaymentTransactionStruct->getOrderTransaction()))
@@ -69,27 +61,19 @@ class OrderCreate
         return $order;
     }
 
-    /**
-     *
-     * @return OrderStruct
-     */
     private function addBasicOrderData(OrderStruct $order, AsyncPaymentTransactionStruct $asyncPaymentTransactionStruct, SalesChannelContext $salesChannelContext): OrderStruct
     {
-        $order->setExtOrderId($asyncPaymentTransactionStruct->getOrder()->getOrderNumber() . '-'. Uuid::randomHex())
+        $order->setExtOrderId($asyncPaymentTransactionStruct->getOrder()->getOrderNumber() . '-' . Uuid::randomHex())
             ->setCustomerIp($this->request->getClientIp())
             ->setMerchantPosId(intval(\OpenPayU_Configuration::getOauthClientId() ? \OpenPayU_Configuration::getOauthClientId() : \OpenPayU_Configuration::getMerchantPosId()))
             ->setDescription($this->paymentDetailsReader->generateShortDescription($asyncPaymentTransactionStruct->getOrder()->getOrderNumber()))
             ->setAdditionalDescription($this->paymentDetailsReader->generateLongDescription($asyncPaymentTransactionStruct->getOrder()->getOrderNumber()))
             ->setCurrencyCode($salesChannelContext->getCurrency()->getIsoCode())
-            ->setTotalAmount((int)round($asyncPaymentTransactionStruct->getOrderTransaction()->getAmount()->getTotalPrice() * 100));
+            ->setTotalAmount((int) round($asyncPaymentTransactionStruct->getOrderTransaction()->getAmount()->getTotalPrice() * 100));
 
         return $order;
     }
 
-    /**
-     *
-     * @return OrderStruct
-     */
     private function addProducts(OrderStruct $order, AsyncPaymentTransactionStruct $asyncPaymentTransactionStruct): OrderStruct
     {
         $products = $asyncPaymentTransactionStruct->getOrder()->getLineItems()->getElements();
@@ -99,7 +83,7 @@ class OrderCreate
                 ->setName($element->getLabel())
                 ->setQuantity($element->getQuantity())
                 ->setUnitPrice(($element->getUnitPrice() ?? 0) * 100)
-                ->setVirtual(($element->getType() !== 'product'))
+                ->setVirtual($element->getType() !== 'product')
                 ->setListingDate($element->getCreatedAt());
 
             $order->addProduct($product);
@@ -108,10 +92,6 @@ class OrderCreate
         return $order;
     }
 
-    /**
-     *
-     * @return OrderStruct
-     */
     private function addBuyer(OrderStruct $order, AsyncPaymentTransactionStruct $asyncPaymentTransactionStruct, SalesChannelContext $salesChannelContext): OrderStruct
     {
         $customer = $asyncPaymentTransactionStruct->getOrder()->getOrderCustomer();

@@ -1,12 +1,13 @@
 <?php
 /**
- * @copyright 2019 Crehler Sp. z o. o.
+ * @copyright 2024 Crehler Sp. z o. o.
  *
  * https://crehler.com/
  * support@crehler.com
  *
  * This file is part of the PayU plugin for Shopware 6.
- * All rights reserved.
+ * License CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/deed.pl) see LICENSE file.
+ *
  */
 
 namespace Crehler\PayU\Struct;
@@ -86,17 +87,11 @@ class BuyerDelivery extends PayUStruct
      */
     protected $recipientPhone;
 
-    /**
-     * @return string
-     */
     public function getStreet(): string
     {
         return $this->street;
     }
 
-    /**
-     * @return BuyerDelivery
-     */
     public function setStreet(string $street): BuyerDelivery
     {
         $this->street = $street;
@@ -104,17 +99,11 @@ class BuyerDelivery extends PayUStruct
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getPostalBox(): string
     {
         return $this->postalBox;
     }
 
-    /**
-     * @return BuyerDelivery
-     */
     public function setPostalBox(string $postalBox): BuyerDelivery
     {
         $this->postalBox = $postalBox;
@@ -122,17 +111,11 @@ class BuyerDelivery extends PayUStruct
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getPostalCode(): string
     {
         return $this->postalCode;
     }
 
-    /**
-     * @return BuyerDelivery
-     */
     public function setPostalCode(string $postalCode): BuyerDelivery
     {
         $this->postalCode = $postalCode;
@@ -140,17 +123,11 @@ class BuyerDelivery extends PayUStruct
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getCity(): string
     {
         return $this->city;
     }
 
-    /**
-     * @return BuyerDelivery
-     */
     public function setCity(string $city): BuyerDelivery
     {
         $this->city = $city;
@@ -158,17 +135,11 @@ class BuyerDelivery extends PayUStruct
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getState(): string
     {
         return $this->state;
     }
 
-    /**
-     * @return BuyerDelivery
-     */
     public function setState(string $state): BuyerDelivery
     {
         $this->state = $state;
@@ -176,17 +147,11 @@ class BuyerDelivery extends PayUStruct
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getCountryCode(): string
     {
         return $this->countryCode;
     }
 
-    /**
-     * @return BuyerDelivery
-     */
     public function setCountryCode(string $countryCode): BuyerDelivery
     {
         $this->countryCode = $countryCode;
@@ -194,17 +159,11 @@ class BuyerDelivery extends PayUStruct
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @return BuyerDelivery
-     */
     public function setName(string $name): BuyerDelivery
     {
         $this->name = $name;
@@ -212,17 +171,11 @@ class BuyerDelivery extends PayUStruct
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getRecipientName(): string
     {
         return $this->recipientName;
     }
 
-    /**
-     * @return BuyerDelivery
-     */
     public function setRecipientName(string $recipientName): BuyerDelivery
     {
         $this->recipientName = $recipientName;
@@ -230,17 +183,11 @@ class BuyerDelivery extends PayUStruct
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getRecipientEmail(): string
     {
         return $this->recipientEmail;
     }
 
-    /**
-     * @return BuyerDelivery
-     */
     public function setRecipientEmail(string $recipientEmail): BuyerDelivery
     {
         $this->recipientEmail = $recipientEmail;
@@ -248,17 +195,11 @@ class BuyerDelivery extends PayUStruct
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getRecipientPhone(): string
     {
         return $this->recipientPhone;
     }
 
-    /**
-     * @return BuyerDelivery
-     */
     public function setRecipientPhone(string $recipientPhone): BuyerDelivery
     {
         $this->recipientPhone = $recipientPhone;

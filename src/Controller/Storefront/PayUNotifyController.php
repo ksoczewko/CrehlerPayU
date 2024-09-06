@@ -1,12 +1,13 @@
 <?php
 /**
- * @copyright 2019 Crehler Sp. z o. o.
+ * @copyright 2024 Crehler Sp. z o. o.
  *
  * https://crehler.com/
  * support@crehler.com
  *
  * This file is part of the PayU plugin for Shopware 6.
- * All rights reserved.
+ * License CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/deed.pl) see LICENSE file.
+ *
  */
 
 namespace Crehler\PayU\Controller\Storefront;
@@ -31,13 +32,13 @@ class PayUNotifyController extends StorefrontController
     /**
      * PayUNotifyController constructor.
      */
-    public function __construct(private readonly FinalizeTokenGenerator $finalizeTokenGenerator, private readonly PayUPayment            $payUPayment, private readonly LoggerInterface        $logger)
+    public function __construct(private readonly FinalizeTokenGenerator $finalizeTokenGenerator, private readonly PayUPayment $payUPayment, private readonly LoggerInterface $logger)
     {
     }
 
     #[Route(path: '/crehler/payu/notify', name: 'action.crehler.payu.notify', options: ['seo' => 'false'], methods: ['POST'], defaults: ['csrf_protected' => false])]
     public function notifyAction(
-        Request             $request,
+        Request $request,
         SalesChannelContext $salesChannelContext): JsonResponse
     {
         $token = $request->get('_sw_payment_token');
@@ -59,6 +60,6 @@ class PayUNotifyController extends StorefrontController
             return new JsonResponse(['success' => false], 500);
         }
 
-        return new JsonResponse(['success' => $status], ($status ? 200 : 500));
+        return new JsonResponse(['success' => $status], $status ? 200 : 500);
     }
 }

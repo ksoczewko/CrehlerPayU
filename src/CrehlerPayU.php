@@ -1,12 +1,13 @@
 <?php
 /**
- * @copyright 2019 Crehler Sp. z o. o.
+ * @copyright 2024 Crehler Sp. z o. o.
  *
  * https://crehler.com/
  * support@crehler.com
  *
  * This file is part of the PayU plugin for Shopware 6.
- * All rights reserved.
+ * License CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/deed.pl) see LICENSE file.
+ *
  */
 
 namespace Crehler\PayU;
@@ -27,18 +28,12 @@ use Shopware\Core\Framework\Plugin\Context\UninstallContext;
  */
 class CrehlerPayU extends Plugin
 {
-    /**
-     * @param InstallContext $context
-     */
     public function install(InstallContext $context): void
     {
         (new Install($this->container, $context))->install();
         parent::install($context);
     }
 
-    /**
-     * @param UninstallContext $context
-     */
     public function uninstall(UninstallContext $context): void
     {
         (new Uninstall($this->container, $context))->uninstall();
@@ -47,8 +42,6 @@ class CrehlerPayU extends Plugin
     }
 
     /**
-     * @param ActivateContext $context
-     *
      * @throws InconsistentCriteriaIdsException
      */
     public function activate(ActivateContext $context): void
@@ -59,8 +52,6 @@ class CrehlerPayU extends Plugin
     }
 
     /**
-     * @param DeactivateContext $context
-     *
      * @throws InconsistentCriteriaIdsException
      */
     public function deactivate(DeactivateContext $context): void

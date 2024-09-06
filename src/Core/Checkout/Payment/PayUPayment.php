@@ -1,32 +1,30 @@
 <?php
 /**
- * @copyright 2019 Crehler Sp. z o. o.
+ * @copyright 2024 Crehler Sp. z o. o.
  *
  * https://crehler.com/
  * support@crehler.com
  *
  * This file is part of the PayU plugin for Shopware 6.
- * All rights reserved.
+ * License CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/deed.pl) see LICENSE file.
+ *
  */
 
 namespace Crehler\PayU\Core\Checkout\Payment;
 
-use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
-use Shopware\Core\Framework\DataAbstractionLayer\Exception\InconsistentCriteriaIdsException;
-use Shopware\Core\System\StateMachine\Exception\StateMachineNotFoundException;
-use Shopware\Core\System\StateMachine\Exception\StateMachineStateNotFoundException;
 use Crehler\PayU\Entity\OrderTransactionRepository;
 use Crehler\PayU\Service\PayU\OrderCreate;
 use Crehler\PayU\Service\PayU\UpdateStatus;
-use OpenPayU_Exception;
-use OpenPayU_Order;
-use OpenPayuOrderStatus;
 use Psr\Log\LoggerInterface;
 use Shopware\Core\Checkout\Order\Aggregate\OrderTransaction\OrderTransactionStateHandler;
 use Shopware\Core\Checkout\Payment\Cart\AsyncPaymentTransactionStruct;
 use Shopware\Core\Checkout\Payment\Cart\PaymentHandler\AsynchronousPaymentHandlerInterface;
+use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
+use Shopware\Core\Framework\DataAbstractionLayer\Exception\InconsistentCriteriaIdsException;
 use Shopware\Core\Framework\Validation\DataBag\RequestDataBag;
 use Shopware\Core\System\SalesChannel\SalesChannelContext;
+use Shopware\Core\System\StateMachine\Exception\StateMachineNotFoundException;
+use Shopware\Core\System\StateMachine\Exception\StateMachineStateNotFoundException;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -52,16 +50,14 @@ class PayUPayment implements AsynchronousPaymentHandlerInterface
     }
 
     /**
-     * @throws OpenPayU_Exception
-     *
-     * @return RedirectResponse
+     * @throws \OpenPayU_Exception
      */
     public function pay(AsyncPaymentTransactionStruct $transaction, RequestDataBag $dataBag, SalesChannelContext $salesChannelContext): RedirectResponse
     {
         $order = $this->orderCreate->createOrder($transaction, $salesChannelContext);
 
         /** @var \OpenPayU_Result $response */
-        $response = OpenPayU_Order::create($order->toArray());
+        $response = \OpenPayU_Order::create($order->toArray());
 
         $data = [
             'id' => $transaction->getOrderTransaction()->getId(),
@@ -71,11 +67,10 @@ class PayUPayment implements AsynchronousPaymentHandlerInterface
         ];
         $this->orderTransactionRepository->update([$data], $salesChannelContext->getContext());
 
-        return  new RedirectResponse($response->getResponse()->redirectUri);
+        return new RedirectResponse($response->getResponse()->redirectUri);
     }
 
     /**
-     *
      * @throws \Exception
      */
     public function finalize(AsyncPaymentTransactionStruct $transaction, Request $request, SalesChannelContext $salesChannelContext): void
@@ -84,30 +79,27 @@ class PayUPayment implements AsynchronousPaymentHandlerInterface
     }
 
     /**
-     *
-     * @throws OpenPayU_Exception
+     * @throws \OpenPayU_Exception
      * @throws InconsistentCriteriaIdsException
      * @throws StateMachineNotFoundException
      * @throws StateMachineStateNotFoundException
-     *
-     * @return bool
      */
     public function notify(AsyncPaymentTransactionStruct $transaction, Request $request, SalesChannelContext $salesChannelContext): bool
     {
-        $result = OpenPayU_Order::consumeNotification($request->getContent());
+        $result = \OpenPayU_Order::consumeNotification($request->getContent());
         $orderID = $result->getResponse()->order->orderId;
         $shopOrderId = $result->getResponse()->order->extOrderId;
-        $paymentStatus = $result->getResponse()->order->status; //NEW PENDING CANCELED REJECTED COMPLETED WAITING_FOR_CONFIRMATION
+        $paymentStatus = $result->getResponse()->order->status; // NEW PENDING CANCELED REJECTED COMPLETED WAITING_FOR_CONFIRMATION
         if ($orderID) {
             /* Check if OrderId exists in Merchant Service, update Order data by OrderRetrieveRequest */
-            $order = OpenPayU_Order::retrieve($orderID);
-            if ($order->getStatus() == OpenPayU_Order::SUCCESS) {
+            $order = \OpenPayU_Order::retrieve($orderID);
+            if ($order->getStatus() == \OpenPayU_Order::SUCCESS) {
                 $this->logger->info('PayU - Paid status: ' . $paymentStatus . ' for order: ' . $shopOrderId);
 
                 match ($paymentStatus) {
-                    OpenPayuOrderStatus::STATUS_COMPLETED => $this->transactionStateHandler->paid($transaction->getOrderTransaction()->getId(), $salesChannelContext->getContext()),
-                    OpenPayuOrderStatus::STATUS_CANCELED => $this->transactionStateHandler->cancel($transaction->getOrderTransaction()->getId(), $salesChannelContext->getContext()),
-                    OpenPayuOrderStatus::STATUS_WAITING_FOR_CONFIRMATION => $this->updateStatus->complete($orderID),
+                    \OpenPayuOrderStatus::STATUS_COMPLETED => $this->transactionStateHandler->paid($transaction->getOrderTransaction()->getId(), $salesChannelContext->getContext()),
+                    \OpenPayuOrderStatus::STATUS_CANCELED => $this->transactionStateHandler->cancel($transaction->getOrderTransaction()->getId(), $salesChannelContext->getContext()),
+                    \OpenPayuOrderStatus::STATUS_WAITING_FOR_CONFIRMATION => $this->updateStatus->complete($orderID),
                     default => true,
                 };
 

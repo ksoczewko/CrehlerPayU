@@ -1,23 +1,22 @@
 <?php
 /**
- * @copyright 2019 Crehler Sp. z o. o.
+ * @copyright 2024 Crehler Sp. z o. o.
  *
  * https://crehler.com/
  * support@crehler.com
  *
  * This file is part of the PayU plugin for Shopware 6.
- * All rights reserved.
+ * License CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/deed.pl) see LICENSE file.
+ *
  */
 
 namespace Crehler\PayU\Service\PayU;
 
-use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Crehler\PayU\Entity\OrderTransactionRepository;
-use OpenPayU_Exception;
-use OpenPayU_Retrieve;
 use Shopware\Core\Checkout\Order\Aggregate\OrderTransaction\OrderTransactionEntity;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityCollection;
+use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Core\Framework\DataAbstractionLayer\Exception\InconsistentCriteriaIdsException;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
@@ -33,7 +32,6 @@ class TransactionDetails
     /**
      * TransactionDetails constructor.
      *
-     *
      * @throws \OpenPayU_Exception_Configuration
      */
     public function __construct(ConfigurationService $configurationFactor, EntityRepository $transactionEntity)
@@ -43,10 +41,7 @@ class TransactionDetails
     }
 
     /**
-     *
      * @throws InconsistentCriteriaIdsException
-     *
-     * @return array
      */
     public function getData(string $orderID, Context $context): array
     {
@@ -84,17 +79,11 @@ class TransactionDetails
         return $this->getPaymentMethod($transaction['payMethod']['value']);
     }
 
-    /**
-     * @return array
-     */
     private function responseToArray(\OpenPayU_Result $response): array
     {
         return json_decode(json_encode($response->getResponse()), true);
     }
 
-    /**
-     * @return array
-     */
     private function getPaymentMethod(string $payMethodKey): array
     {
         $methods = $this->getAvailableMethods();
@@ -105,18 +94,15 @@ class TransactionDetails
         return [];
     }
 
-    /**
-     * @return array
-     */
     private function getAvailableMethods(): array
     {
         $methods = [];
         try {
-            $response = OpenPayU_Retrieve::payMethods();
+            $response = \OpenPayU_Retrieve::payMethods();
             if ($response->getStatus() == 'SUCCESS') {
                 $methods = $this->responseToArray($response);
             }
-        } catch (OpenPayU_Exception) {
+        } catch (\OpenPayU_Exception) {
             return [];
         }
         if (empty($methods)) {

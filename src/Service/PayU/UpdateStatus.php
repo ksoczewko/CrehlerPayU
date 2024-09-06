@@ -1,18 +1,16 @@
 <?php
 /**
- * @copyright 2019 Crehler Sp. z o. o.
+ * @copyright 2024 Crehler Sp. z o. o.
  *
  * https://crehler.com/
  * support@crehler.com
  *
  * This file is part of the PayU plugin for Shopware 6.
- * All rights reserved.
+ * License CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/deed.pl) see LICENSE file.
+ *
  */
 
 namespace Crehler\PayU\Service\PayU;
-
-use OpenPayU_Order;
-use OpenPayuOrderStatus;
 
 /**
  * Class UpdateStatus
@@ -21,7 +19,6 @@ class UpdateStatus
 {
     /**
      * UpdateStatus constructor.
-     *
      *
      * @throws \OpenPayU_Exception_Configuration
      */
@@ -35,9 +32,9 @@ class UpdateStatus
      */
     public function complete(string $orderID)
     {
-        OpenPayU_Order::statusUpdate([
+        \OpenPayU_Order::statusUpdate([
             'orderId' => $orderID,
-            'orderStatus' => OpenPayuOrderStatus::STATUS_COMPLETED,
+            'orderStatus' => \OpenPayuOrderStatus::STATUS_COMPLETED,
         ]);
     }
 }
